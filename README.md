@@ -109,6 +109,13 @@ python inference.py --model-type fast --mode i2v \
 ```
 
 
+For a custom image, replace `--prompt-path ...` with `--prompt auto-first-person`
+for a scene description or `--prompt auto-third-person` for subject following.
+This uses [Qwen3-VL-4B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct)
+to write the prompt, then releases it before loading WorldCrafter.
+Weights are downloaded on first use. See the [prompt guide](test/README.md#automatic-prompts)
+for details.
+
 ### 2. Text-to-video
 
 ```bash

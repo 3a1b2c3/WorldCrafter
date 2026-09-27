@@ -46,4 +46,5 @@ where = ["."]
 include = ["worldcrafter*", "demo*"]
 
 [tool.setuptools.package-data]
+worldcrafter = ["prompts/*.txt"]
 demo = ["static/*", "configs/*.json", "inputs/*/*.png"]

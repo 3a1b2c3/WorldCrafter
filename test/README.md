@@ -143,6 +143,37 @@ scale conventions described above.
 
 ## Prompt styles
 
+### Automatic prompts
+
+Generate a prompt from your input image with either model:
+
+```bash
+python inference.py --model-type fast --mode i2v \
+  --image-path path/to/image.png \
+  --prompt auto-first-person \
+  --actions-file path/to/actions.txt
+```
+
+Use `auto-first-person` for a description of the scene's layout, materials, and
+lighting, or `auto-third-person` for a subject-following description beginning
+with “A third-person ... view closely follows ...”. Both templates target one
+English paragraph of 100–130 words. A single image leaves future motion ambiguous;
+review the generated prompt when a particular action matters.
+
+The script loads `Qwen/Qwen3-VL-4B-Instruct` on the selected `--device`, generates
+the prompt, and releases the caption model before loading WorldCrafter. Its weights
+are cached after the first download. Use `--caption-model path/to/Qwen3-VL-4B-Instruct`
+to load a local copy. The [first-person](../worldcrafter/prompts/first_person.txt)
+and [third-person](../worldcrafter/prompts/third_person.txt) templates can be edited
+to adjust the writing style.
+
+The resolved text and caption metadata are saved beside the video as
+`<video-stem>.prompt.txt` and `<video-stem>.caption.json`. Reuse the text with
+`--prompt-path` to reproduce or edit it. Base runs with `--state-output-dir` also
+save `auto_prompt.json` alongside the states; resuming with the same auto mode
+reuses this prompt. Automatic prompts require I2V input; ordinary text prompts
+and prompt files use the existing inference path.
+
 ### Third-person following views
 
 <img src="I2V/00_cat_vac/image.png" alt="Cat input image" width="640">

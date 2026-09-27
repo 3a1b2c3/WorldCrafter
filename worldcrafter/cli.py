@@ -6,6 +6,8 @@ from uuid import uuid4
 from pathlib import Path
 from typing import Sequence
 
+from .caption import AUTO_PROMPTS, DEFAULT_CAPTION_MODEL
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MODEL = ROOT / "weights" / "WorldCrafter-Base"
@@ -37,7 +39,11 @@ def build_parser() -> argparse.ArgumentParser:
     camera.add_argument("--actions", help='Camera actions, e.g. "forward1x2 yaw_left30x3 backward1"')
     camera.add_argument("--actions-file", type=Path, help="TXT file of camera actions")
     parser.add_argument("--orbit-radius", type=float, help="Metric radius for orbit actions (default: 2)")
-    parser.add_argument("--prompt")
+    parser.add_argument("--prompt", help="Prompt text, auto-first-person, or auto-third-person")
+    parser.add_argument(
+        "--caption-model", default=DEFAULT_CAPTION_MODEL,
+        help="Qwen3-VL model ID or local directory for automatic prompts",
+    )
     parser.add_argument("--prompt-path", type=Path)
     parser.add_argument("--negative-prompt")
     parser.add_argument(
@@ -146,6 +152,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         args.image_path = args.image_path or DEFAULT_IMAGE
     elif args.image_path is not None:
         raise ValueError("--image-path is only valid with --mode i2v")
+
+    if args.prompt in AUTO_PROMPTS:
+        if args.mode != "i2v":
+            raise ValueError("Automatic prompts require --mode i2v and an input image")
+        if not args.image_path.is_file():
+            raise FileNotFoundError(args.image_path)
 
     if args.output_path is None:
         run_id = f"{datetime.now():%Y%m%d_%H%M%S}_{uuid4().hex[:8]}"

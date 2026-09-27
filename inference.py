@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 from worldcrafter.cli import parse_args, prepare_camera
+from worldcrafter.caption import prepare_prompt
 
 
 def main() -> None:
     args = parse_args()
     prepare_camera(args)
+    prepare_prompt(args)
 
     from worldcrafter.inference import WorldCrafter
 
