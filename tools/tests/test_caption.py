@@ -1,4 +1,6 @@
 import json
+import contextlib
+import io
 from pathlib import Path
 import tempfile
 import unittest
@@ -6,15 +8,48 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from worldcrafter.caption import prepare_prompt
+from worldcrafter.caption import AUTO_PROMPTS, DEFAULT_CAPTION_MODEL, prepare_prompt
 from worldcrafter.cli import parse_args
 
 
 class CaptionTests(unittest.TestCase):
     def test_auto_requires_image_mode(self):
-        for prompt in ("auto-first-person", "auto-third-person"):
+        for prompt in AUTO_PROMPTS:
             with self.assertRaisesRegex(ValueError, "require --mode i2v"):
                 parse_args(["--mode", "t2v", "--prompt", prompt])
+
+    def test_text_and_file_prompts(self):
+        text = "A garden with flowers. " * 100
+        self.assertEqual(parse_args(["--prompt", text]).prompt, text.strip())
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "scene prompt.txt"
+            path.write_text("A garden.\n", encoding="utf-8")
+            for mode in ("i2v", "t2v"):
+                args = parse_args(["--mode", mode, "--prompt", str(path)])
+                self.assertEqual(args.prompt, "A garden.")
+                self.assertFalse(hasattr(args, "prompt_path"))
+            path.write_text(" \n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "empty"):
+                parse_args(["--prompt", str(path)])
+            path.unlink()
+            with self.assertRaises(FileNotFoundError):
+                parse_args(["--prompt", str(path)])
+
+    def test_removed_argument_is_rejected(self):
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                parse_args(["--prompt-path", "prompt.txt"])
+
+    def test_local_caption_weights_and_explicit_override(self):
+        with tempfile.TemporaryDirectory() as directory, patch("worldcrafter.cli.ROOT", Path(directory)):
+            self.assertEqual(parse_args(["--prompt", "scene"]).caption_model, DEFAULT_CAPTION_MODEL)
+            local = Path(directory) / "weights/Qwen3-VL-4B-Instruct"
+            local.mkdir(parents=True)
+            self.assertEqual(parse_args(["--prompt", "scene"]).caption_model, str(local))
+            self.assertEqual(parse_args(["--caption-model", "chosen", "--prompt", "scene"]).caption_model, "chosen")
+
+    def test_auto_uses_first_person_template(self):
+        self.assertEqual(AUTO_PROMPTS["auto"], AUTO_PROMPTS["auto-first-person"])
 
     def test_ordinary_prompt_does_not_load_caption_model(self):
         args = parse_args(["--prompt", "An auto-first-person example in a classroom."])

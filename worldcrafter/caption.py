@@ -8,6 +8,7 @@ from pathlib import Path
 
 DEFAULT_CAPTION_MODEL = "Qwen/Qwen3-VL-4B-Instruct"
 AUTO_PROMPTS = {
+    "auto": "first_person",
     "auto-first-person": "first_person",
     "auto-third-person": "third_person",
 }
@@ -90,7 +91,7 @@ def prepare_prompt(args) -> None:
         saved = args.resume_from.parent / "auto_prompt.json"
         if not saved.is_file():
             raise ValueError(
-                "Resume requires the saved auto_prompt.json or an explicit --prompt-path"
+                "Resume requires the saved auto_prompt.json or --prompt path/to/prompt.txt"
             )
         result = json.loads(saved.read_text(encoding="utf-8"))
         if any(result.get(key) != value for key, value in identity.items()):

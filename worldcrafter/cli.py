@@ -39,12 +39,13 @@ def build_parser() -> argparse.ArgumentParser:
     camera.add_argument("--actions", help='Camera actions, e.g. "forward1x2 yaw_left30x3 backward1"')
     camera.add_argument("--actions-file", type=Path, help="TXT file of camera actions")
     parser.add_argument("--orbit-radius", type=float, help="Metric radius for orbit actions (default: 2)")
-    parser.add_argument("--prompt", help="Prompt text, auto-first-person, or auto-third-person")
     parser.add_argument(
-        "--caption-model", default=DEFAULT_CAPTION_MODEL,
+        "--prompt", help="Prompt text, a .txt file, auto, auto-first-person, or auto-third-person"
+    )
+    parser.add_argument(
+        "--caption-model",
         help="Qwen3-VL model ID or local directory for automatic prompts",
     )
-    parser.add_argument("--prompt-path", type=Path)
     parser.add_argument("--negative-prompt")
     parser.add_argument(
         "--negative-prompt-path", type=Path, default=DEFAULT_NEGATIVE_PROMPT
@@ -93,6 +94,10 @@ def _read_text(path: Path) -> str:
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     args = build_parser().parse_args(argv)
+    caption_path = ROOT / "weights" / "Qwen3-VL-4B-Instruct"
+    args.caption_model = args.caption_model or (
+        str(caption_path) if caption_path.is_dir() else DEFAULT_CAPTION_MODEL
+    )
     fast = args.model_type == "fast"
     args.model_path = args.model_path or ROOT / "weights" / (
         "WorldCrafter-Fast" if fast else "WorldCrafter-Base"
@@ -136,15 +141,15 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     if args.orbit_radius is not None and args.camera_events is None:
         raise ValueError("--orbit-radius requires --actions or --actions-file")
     if args.prompt is None:
-        prompt_path = args.prompt_path
-        if prompt_path is None:
-            prompt_path = (
-                DEFAULT_I2V_PROMPT if args.mode == "i2v" else DEFAULT_T2V_PROMPT
-            )
-        args.prompt_path = prompt_path
-        args.prompt = _read_text(prompt_path)
-    elif args.prompt_path is not None:
-        raise ValueError("use either --prompt or --prompt-path, not both")
+        args.prompt = _read_text(
+            DEFAULT_I2V_PROMPT if args.mode == "i2v" else DEFAULT_T2V_PROMPT
+        )
+    else:
+        args.prompt = args.prompt.strip()
+        if args.prompt.lower().endswith(".txt"):
+            args.prompt = _read_text(Path(args.prompt).expanduser())
+        elif not args.prompt:
+            raise ValueError("prompt must not be empty")
 
     if args.negative_prompt is None:
         args.negative_prompt = _read_text(args.negative_prompt_path)

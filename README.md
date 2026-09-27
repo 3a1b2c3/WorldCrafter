@@ -72,6 +72,7 @@ Choose the appropriate CUDA build from the
 | --- | --- | --- |
 | WorldCrafter-Base | 🤗 [Hugging Face](https://huggingface.co/TencentARC/WorldCrafter-Base) | Base model |
 | WorldCrafter-Fast | 🤗 [Hugging Face](https://huggingface.co/TencentARC/WorldCrafter-Fast) | Distilled high- and low-noise models for faster inference |
+| Qwen3-VL-4B-Instruct | 🤗 [Hugging Face](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct) | Image captioning for automatic prompts |
 
 Download weights with the Hugging Face CLI:
 
@@ -80,6 +81,9 @@ hf download TencentARC/WorldCrafter-Fast --local-dir weights/WorldCrafter-Fast
 
 # Optional: also download Base to run the base model
 hf download TencentARC/WorldCrafter-Base --local-dir weights/WorldCrafter-Base
+
+# Optional: generate prompts automatically from input images
+hf download Qwen/Qwen3-VL-4B-Instruct --local-dir weights/Qwen3-VL-4B-Instruct
 ```
 
 Base model uses shared components from `WorldCrafter-Fast`, so keep both folders when using base model.
@@ -90,46 +94,61 @@ See the [inference guide](test/README.md) for camera controls, prompt writing, e
 
 ### 1. Image-to-video
 
-Run with either model:
+Run with the Base or distilled Fast model:
 
 ```bash
 # Base
 python inference.py --model-type base --mode i2v \
   --image-path test/I2V/00_cat_vac/image.png \
-  --prompt-path test/I2V/00_cat_vac/prompt.txt \
+  --prompt test/I2V/00_cat_vac/prompt.txt \
   --camera-path test/I2V/00_cat_vac/camera.npy \
-  --output-path output/base.mp4
+  --output-path output/cat_vac.mp4
 
 # Fast
 python inference.py --model-type fast --mode i2v \
-  --image-path test/I2V/00_cat_vac/image.png \
-  --prompt-path test/I2V/00_cat_vac/prompt.txt \
-  --camera-path test/I2V/00_cat_vac/camera.npy \
-  --output-path output/fast.mp4
+  --image-path test/I2V/06_waterfall/image.png \
+  --prompt test/I2V/06_waterfall/prompt.txt \
+  --camera-path test/I2V/06_waterfall/camera.npy \
+  --output-path output/waterfall.mp4
 ```
 
 
-For a custom image, replace `--prompt-path ...` with `--prompt auto-first-person`
+`--prompt` accepts text or a `.txt` file. For a custom input image, use `--prompt auto-first-person`
 for a scene description or `--prompt auto-third-person` for subject following.
+`--prompt auto` is shorthand for `--prompt auto-first-person`.
 This uses [Qwen3-VL-4B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct)
-to write the prompt, then releases it before loading WorldCrafter.
-Weights are downloaded on first use. See the [prompt guide](test/README.md#automatic-prompts)
-for details.
+to automatically write the prompt. For example:
+
+```bash
+# Base
+python inference.py --model-type base --mode i2v \
+  --image-path test/I2V/00_cat_vac/image.png \
+  --prompt auto-third-person \
+  --camera-path test/I2V/00_cat_vac/camera.npy \
+  --output-path output/cat.mp4
+
+# Fast
+python inference.py --model-type fast --mode i2v \
+  --image-path test/I2V/06_waterfall/image.png \
+  --prompt auto-first-person \
+  --camera-path test/I2V/06_waterfall/camera.npy \
+  --output-path output/waterfall_auto.mp4
+```
 
 ### 2. Text-to-video
 
 ```bash
 # Base
 python inference.py --model-type base --mode t2v \
-  --prompt-path test/T2V/00_red_balloon/prompt.txt \
+  --prompt test/T2V/00_red_balloon/prompt.txt \
   --camera-path test/T2V/00_red_balloon/camera.npy \
-  --output-path output/t2v.mp4
+  --output-path output/balloon.mp4
 
 # Fast
 python inference.py --model-type fast --mode t2v \
-  --prompt-path test/T2V/00_red_balloon/prompt.txt \
-  --camera-path test/T2V/00_red_balloon/camera.npy \
-  --output-path output/fast_t2v.mp4
+  --prompt test/T2V/02_tokyo_street/prompt.txt \
+  --camera-path test/T2V/02_tokyo_street/camera.npy \
+  --output-path output/tokyo_street.mp4
 ```
 
 Compilation is **off by default**. Add `--enable-compile` to enable it; the first run takes longer to start.

@@ -15,7 +15,7 @@ or `--model-type fast`.
 ```bash
 python inference.py --model-type fast --mode i2v \
   --image-path path/to/image.png \
-  --prompt-path path/to/prompt.txt \
+  --prompt path/to/prompt.txt \
   --camera-path path/to/camera.npy
 ```
 
@@ -23,7 +23,7 @@ python inference.py --model-type fast --mode i2v \
 
 ```bash
 python inference.py --model-type fast --mode t2v \
-  --prompt-path path/to/prompt.txt \
+  --prompt path/to/prompt.txt \
   --actions-file path/to/actions.txt
 ```
 
@@ -34,7 +34,7 @@ python inference.py --model-type fast --mode t2v \
 | `--model-type` | Select `base` or `fast`. |
 | `--mode` | Select `i2v` or `t2v`. |
 | `--image-path` | Starting image for I2V; omit for T2V. |
-| `--prompt-path` | Read the prompt from a text file. Use `--prompt "..."` to pass text directly instead. |
+| `--prompt` | Prompt text, a `.txt` file, or an automatic prompt mode for I2V. |
 | `--camera-path` | Load a global c2w trajectory from a `.npy` file. |
 | `--actions-file` | Generate the trajectory from an action text file. Use `--actions "forward1 yaw_left30"` to pass actions directly instead. |
 | `--num-chunks` | Generate only the first N chunks; otherwise use the full trajectory. Each chunk contains 33 frames. |
@@ -156,20 +156,24 @@ python inference.py --model-type fast --mode i2v \
 
 Use `auto-first-person` for a description of the scene's layout, materials, and
 lighting, or `auto-third-person` for a subject-following description beginning
-with “A third-person ... view closely follows ...”. Both templates target one
+with “A third-person ... view closely follows ...”. `auto` is shorthand for
+`auto-first-person`. Both templates target one
 English paragraph of 100–130 words. A single image leaves future motion ambiguous;
 review the generated prompt when a particular action matters.
 
 The script loads `Qwen/Qwen3-VL-4B-Instruct` on the selected `--device`, generates
 the prompt, and releases the caption model before loading WorldCrafter. Its weights
-are cached after the first download. Use `--caption-model path/to/Qwen3-VL-4B-Instruct`
-to load a local copy. The [first-person](../worldcrafter/prompts/first_person.txt)
+are loaded from `weights/Qwen3-VL-4B-Instruct` when present, otherwise downloaded
+and cached on first use. Use `--caption-model path/to/Qwen3-VL-4B-Instruct`
+to select another location. The [first-person](../worldcrafter/prompts/first_person.txt)
 and [third-person](../worldcrafter/prompts/third_person.txt) templates can be edited
 to adjust the writing style.
 
 The resolved text and caption metadata are saved beside the video as
 `<video-stem>.prompt.txt` and `<video-stem>.caption.json`. Reuse the text with
-`--prompt-path` to reproduce or edit it. Base runs with `--state-output-dir` also
+`--prompt path/to/video.prompt.txt` to reproduce or edit it. Values ending in
+`.txt` are interpreted as file paths; a missing or empty file raises an error.
+Base runs with `--state-output-dir` also
 save `auto_prompt.json` alongside the states; resuming with the same auto mode
 reuses this prompt. Automatic prompts require I2V input; ordinary text prompts
 and prompt files use the existing inference path.
