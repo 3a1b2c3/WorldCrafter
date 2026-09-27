@@ -92,6 +92,8 @@ Base model uses shared components from `WorldCrafter-Fast`, so keep both folders
 
 See the [inference guide](test/README.md) for camera controls, prompt writing, examples and custom inputs.
 
+Videos are saved to `output/<timestamp>/i2v_<image-name>.mp4`. T2V uses `t2v_<prompt-file-name>.mp4`, or `t2v.mp4` for inline text.
+
 ### 1. Image-to-video
 
 Run with the Base or distilled Fast model:
@@ -101,15 +103,13 @@ Run with the Base or distilled Fast model:
 python inference.py --model-type base --mode i2v \
   --image-path test/I2V/00_cat_vac/image.png \
   --prompt test/I2V/00_cat_vac/prompt.txt \
-  --camera-path test/I2V/00_cat_vac/camera.npy \
-  --output-path output/cat_vac.mp4
+  --camera-path test/I2V/00_cat_vac/camera.npy
 
 # Fast
 python inference.py --model-type fast --mode i2v \
   --image-path test/I2V/06_waterfall/image.png \
   --prompt test/I2V/06_waterfall/prompt.txt \
-  --camera-path test/I2V/06_waterfall/camera.npy \
-  --output-path output/waterfall.mp4
+  --camera-path test/I2V/06_waterfall/camera.npy
 ```
 
 
@@ -124,15 +124,13 @@ to automatically write the prompt. For example:
 python inference.py --model-type base --mode i2v \
   --image-path test/I2V/00_cat_vac/image.png \
   --prompt auto-third-person \
-  --camera-path test/I2V/00_cat_vac/camera.npy \
-  --output-path output/cat.mp4
+  --camera-path test/I2V/00_cat_vac/camera.npy
 
 # Fast
 python inference.py --model-type fast --mode i2v \
   --image-path test/I2V/06_waterfall/image.png \
   --prompt auto-first-person \
-  --camera-path test/I2V/06_waterfall/camera.npy \
-  --output-path output/waterfall_auto.mp4
+  --camera-path test/I2V/06_waterfall/camera.npy
 ```
 
 ### 2. Text-to-video
@@ -141,14 +139,12 @@ python inference.py --model-type fast --mode i2v \
 # Base
 python inference.py --model-type base --mode t2v \
   --prompt test/T2V/00_red_balloon/prompt.txt \
-  --camera-path test/T2V/00_red_balloon/camera.npy \
-  --output-path output/balloon.mp4
+  --camera-path test/T2V/00_red_balloon/camera.npy
 
 # Fast
 python inference.py --model-type fast --mode t2v \
   --prompt test/T2V/02_tokyo_street/prompt.txt \
-  --camera-path test/T2V/02_tokyo_street/camera.npy \
-  --output-path output/tokyo_street.mp4
+  --camera-path test/T2V/02_tokyo_street/camera.npy
 ```
 
 Compilation is **off by default**. Add `--enable-compile` to enable it; the first run takes longer to start.

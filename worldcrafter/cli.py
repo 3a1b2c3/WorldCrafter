@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime
-from uuid import uuid4
 from pathlib import Path
 from typing import Sequence
 
@@ -140,14 +139,15 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         )
     if args.orbit_radius is not None and args.camera_events is None:
         raise ValueError("--orbit-radius requires --actions or --actions-file")
+    prompt_file = None
     if args.prompt is None:
-        args.prompt = _read_text(
-            DEFAULT_I2V_PROMPT if args.mode == "i2v" else DEFAULT_T2V_PROMPT
-        )
+        prompt_file = DEFAULT_I2V_PROMPT if args.mode == "i2v" else DEFAULT_T2V_PROMPT
+        args.prompt = _read_text(prompt_file)
     else:
         args.prompt = args.prompt.strip()
         if args.prompt.lower().endswith(".txt"):
-            args.prompt = _read_text(Path(args.prompt).expanduser())
+            prompt_file = Path(args.prompt).expanduser()
+            args.prompt = _read_text(prompt_file)
         elif not args.prompt:
             raise ValueError("prompt must not be empty")
 
@@ -165,10 +165,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
             raise FileNotFoundError(args.image_path)
 
     if args.output_path is None:
-        run_id = f"{datetime.now():%Y%m%d_%H%M%S}_{uuid4().hex[:8]}"
-        args.output_path = (
-            ROOT / "output" / args.model_type / args.mode / run_id / "video.mp4"
-        )
+        run_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        source = args.image_path if args.mode == "i2v" else prompt_file
+        name = f"{args.mode}_{source.stem}" if source is not None else args.mode
+        args.output_path = ROOT / "output" / run_id / f"{name}.mp4"
     return args
 
 

@@ -29,6 +29,9 @@ python inference.py --model-type fast --mode t2v \
 
 ### Parameters
 
+Each run saves its video under `output/<timestamp>/`: `i2v_<image-name>.mp4` for I2V,
+or `t2v_<prompt-file-name>.mp4` for T2V (`t2v.mp4` for inline text).
+
 | Parameter | Description |
 | --- | --- |
 | `--model-type` | Select `base` or `fast`. |
@@ -39,7 +42,6 @@ python inference.py --model-type fast --mode t2v \
 | `--actions-file` | Generate the trajectory from an action text file. Use `--actions "forward1 yaw_left30"` to pass actions directly instead. |
 | `--num-chunks` | Generate only the first N chunks; otherwise use the full trajectory. Each chunk contains 33 frames. |
 | `--seed` | Random seed; defaults to `42`. |
-| `--output-path` | Output video path. By default, each run creates a directory under `output/<model-type>/<mode>/`. |
 | `--enable-compile` | Enable compilation; disabled by default. |
 
 Choose exactly one trajectory input: `--camera-path`, `--actions-file`, or

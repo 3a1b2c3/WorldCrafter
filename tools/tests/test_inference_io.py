@@ -28,13 +28,29 @@ class InferenceIOTests(unittest.TestCase):
         self.assertEqual(len(set(paths)), 8)
         self.assertTrue(
             all(
-                path.name == "video.mp4" and path.parents[3].name == "output"
+                path.name in ("i2v_image.mp4", "t2v_prompt.mp4")
+                and path.parents[1].name == "output"
                 for path in paths
             )
         )
         self.assertEqual(
             parse_args(["--output-path", "chosen.mp4"]).output_path, Path("chosen.mp4")
         )
+
+    def test_output_names_follow_input_sources(self):
+        self.assertEqual(
+            parse_args(["--image-path", "my_cat.png"]).output_path.name,
+            "i2v_my_cat.mp4",
+        )
+        self.assertEqual(
+            parse_args(["--mode", "t2v", "--prompt", "A forest"]).output_path.name,
+            "t2v.mp4",
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            prompt = Path(directory) / "forest.txt"
+            prompt.write_text("A forest", encoding="utf-8")
+            args = parse_args(["--mode", "t2v", "--prompt", str(prompt)])
+            self.assertEqual(args.output_path.name, "t2v_forest.mp4")
 
     def test_chunk_callback_requires_output_directory_before_inference(self):
         model = WorldCrafter.__new__(WorldCrafter)
