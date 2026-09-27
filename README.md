@@ -165,14 +165,11 @@ for camera controls, orbit settings, and deployment.
 If you find WorldCrafter useful in your research, please cite:
 
 ```bibtex
-@misc{yu2026worldcrafter,
+@article{yu2026worldcrafter,
   title={WorldCrafter: Consistent Video World Model with Implicit {3D}-aware Memory},
-  author={Wangbo Yu and Kunhao Liu and Wenbo Hu and Shenghai Yuan and Chaoran Feng and Haiyang Zhou and Yukun Huang and Yiran Wang and Wang Zhao and Yingmin Luo and Ying Shan},
-  year={2026},
-  eprint={2609.24984},
-  archivePrefix={arXiv},
-  primaryClass={cs.CV},
-  url={https://arxiv.org/abs/2609.24984}
+  author={Yu, Wangbo and Liu, Kunhao and Hu, Wenbo and Yuan, Shenghai and Feng, Chaoran and Zhou, Haiyang and Huang, Yukun and Wang, Yiran and Zhao, Wang and Luo, Yingmin and Shan, Ying},
+  journal={arXiv preprint arXiv:2609.24984},
+  year={2026}
 }
 ```
 
