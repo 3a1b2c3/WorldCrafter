@@ -81,6 +81,9 @@ hf download TencentARC/WorldCrafter-Fast --local-dir weights/WorldCrafter-Fast
 # Optional: also download Base to run the base model
 hf download TencentARC/WorldCrafter-Base --local-dir weights/WorldCrafter-Base
 
+# Optional: generate prompts automatically from input images
+hf download Qwen/Qwen3-VL-4B-Instruct --local-dir weights/Qwen3-VL-4B-Instruct
+
 ```
 
 Base model uses shared components from `WorldCrafter-Fast`, so keep both folders when using base model.
