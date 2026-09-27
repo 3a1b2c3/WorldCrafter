@@ -48,14 +48,12 @@ class CaptionTests(unittest.TestCase):
             self.assertEqual(parse_args(["--prompt", "scene"]).caption_model, str(local))
             self.assertEqual(parse_args(["--caption-model", "chosen", "--prompt", "scene"]).caption_model, "chosen")
 
-    def test_auto_uses_first_person_template(self):
-        self.assertEqual(AUTO_PROMPTS["auto"], AUTO_PROMPTS["auto-first-person"])
-
     def test_ordinary_prompt_does_not_load_caption_model(self):
-        args = parse_args(["--prompt", "An auto-first-person example in a classroom."])
-        with patch("worldcrafter.caption.generate_caption", side_effect=AssertionError):
-            prepare_prompt(args)
-        self.assertEqual(args.prompt, "An auto-first-person example in a classroom.")
+        for prompt in ("auto", "An auto-first-person example in a classroom."):
+            args = parse_args(["--prompt", prompt])
+            with patch("worldcrafter.caption.generate_caption", side_effect=AssertionError):
+                prepare_prompt(args)
+            self.assertEqual(args.prompt, prompt)
 
     def test_saved_prompt_resume_and_changed_image(self):
         with tempfile.TemporaryDirectory() as directory:

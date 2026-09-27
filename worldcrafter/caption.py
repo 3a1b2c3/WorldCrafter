@@ -8,7 +8,6 @@ from pathlib import Path
 
 DEFAULT_CAPTION_MODEL = "Qwen/Qwen3-VL-4B-Instruct"
 AUTO_PROMPTS = {
-    "auto": "first_person",
     "auto-first-person": "first_person",
     "auto-third-person": "third_person",
 }

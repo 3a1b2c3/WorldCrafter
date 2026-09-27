@@ -39,7 +39,7 @@ def build_parser() -> argparse.ArgumentParser:
     camera.add_argument("--actions-file", type=Path, help="TXT file of camera actions")
     parser.add_argument("--orbit-radius", type=float, help="Metric radius for orbit actions (default: 2)")
     parser.add_argument(
-        "--prompt", help="Prompt text, a .txt file, auto, auto-first-person, or auto-third-person"
+        "--prompt", help="Prompt text, a .txt file, auto-first-person, or auto-third-person"
     )
     parser.add_argument(
         "--caption-model",

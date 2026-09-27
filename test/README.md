@@ -158,8 +158,7 @@ python inference.py --model-type fast --mode i2v \
 
 Use `auto-first-person` for a description of the scene's layout, materials, and
 lighting, or `auto-third-person` for a subject-following description beginning
-with “A third-person ... view closely follows ...”. `auto` is shorthand for
-`auto-first-person`. Both templates target one
+with “A third-person ... view closely follows ...”. Both templates target one
 English paragraph of 100–130 words. A single image leaves future motion ambiguous;
 review the generated prompt when a particular action matters.
 
