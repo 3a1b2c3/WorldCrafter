@@ -112,7 +112,7 @@ python inference.py --model-type fast --mode i2v \
 
 
 `--prompt` accepts text or a `.txt` file. For a custom input image, use `--prompt auto-first-person`
-for a scene description or `--prompt auto-third-person` for subject following.
+for a first-view scene description or `--prompt auto-third-person` for a third-view scene description.
 This uses [Qwen3-VL-4B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct)
 to automatically write the prompt. For example:
 
