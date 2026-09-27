@@ -72,7 +72,6 @@ Choose the appropriate CUDA build from the
 | --- | --- | --- |
 | WorldCrafter-Base | 🤗 [Hugging Face](https://huggingface.co/TencentARC/WorldCrafter-Base) | Base model |
 | WorldCrafter-Fast | 🤗 [Hugging Face](https://huggingface.co/TencentARC/WorldCrafter-Fast) | Distilled high- and low-noise models for faster inference |
-| Qwen3-VL-4B-Instruct | 🤗 [Hugging Face](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct) | Image captioning for automatic prompts |
 
 Download weights with the Hugging Face CLI:
 
@@ -82,8 +81,6 @@ hf download TencentARC/WorldCrafter-Fast --local-dir weights/WorldCrafter-Fast
 # Optional: also download Base to run the base model
 hf download TencentARC/WorldCrafter-Base --local-dir weights/WorldCrafter-Base
 
-# Optional: generate prompts automatically from input images
-hf download Qwen/Qwen3-VL-4B-Instruct --local-dir weights/Qwen3-VL-4B-Instruct
 ```
 
 Base model uses shared components from `WorldCrafter-Fast`, so keep both folders when using base model.
@@ -91,8 +88,6 @@ Base model uses shared components from `WorldCrafter-Fast`, so keep both folders
 ## 💫 Inference
 
 See the [inference guide](test/README.md) for camera controls, prompt writing, examples and custom inputs.
-
-Videos are saved to `output/<timestamp>/i2v_<image-name>.mp4`. T2V uses `t2v_<prompt-file-name>.mp4`, or `t2v.mp4` for inline text.
 
 ### 1. Image-to-video
 
