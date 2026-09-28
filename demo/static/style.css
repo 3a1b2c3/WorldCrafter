@@ -132,7 +132,8 @@ main {
   line-height: 1.6;
 }
 .prompt-inputs textarea {
-  min-height: 260px;
+  min-height: 120px;
+  height: 160px;
 }
 aside > .two-cols label {
   margin-top: 0;
