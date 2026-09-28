@@ -1,4 +1,4 @@
-import { localizedText, initLanguage } from "./i18n.js?v=keys-1";
+import { localizedText, initLanguage } from "./i18n.js?v=layout-3";
 const $ = (id) => document.getElementById(id);
 const PLAYBACK_FPS = 10;
 const ENCODED_FPS = 16;

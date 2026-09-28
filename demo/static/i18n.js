@@ -109,7 +109,8 @@ const templates = [
   [/^([\d.]+)° \/ 段$/, "$1° / chunk"],
   [/^播放第 (\d+) 段 · (\d+) fps$/, "Playing chunk $1 · $2 fps"],
   [/^Orbit · 半径 ([\d.]+) m$/, "Orbit · radius $1 m"],
-  [/^自动描述生成失败：(.*)$/s, "Description generation failed: $1"],
+  [/^半径 ([\d.]+) m$/, "radius $1 m"],
+
 ];
 let language = "en";
 try {
@@ -122,6 +123,8 @@ export function translate(source) {
   if (language === "zh") return source;
   const key = normalize(source);
   if (messages[key]) return messages[key];
+  const captionError = key.match(/^自动描述生成失败：(.*)$/s);
+  if (captionError) return `Description generation failed: ${translate(captionError[1])}`;
   for (const [pattern, replacement] of templates)
     if (pattern.test(key)) return key.replace(pattern, replacement);
   if (key.includes(" · ")) return key.split(" · ").map(translate).join(" · ");

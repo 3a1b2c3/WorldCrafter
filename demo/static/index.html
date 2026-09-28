@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>WorldCrafter · World Explorer</title>
-    <link rel="stylesheet" href="/static/style.css?v=keys-2" />
+    <link rel="stylesheet" href="/static/style.css?v=layout-3" />
   </head>
   <body>
     <header>
@@ -61,19 +61,6 @@
           <span id="state"><span class="ui-text" data-i18n="准备就绪">准备就绪</span></span
           ><span id="progressText"><span class="ui-text" data-i18n="0 / 50 段">0 / 50 段</span></span>
         </div>
-        <div class="metrics">
-          <div>
-            <label><span class="ui-text" data-i18n="本段生成耗时">本段生成耗时</span></label
-            ><strong id="seconds">—<small> s</small></strong>
-          </div>
-          <div>
-            <label><span class="ui-text" data-i18n="实际生成速度">实际生成速度</span></label
-            ><strong id="fps">—<small> FPS</small></strong>
-          </div>
-          <div>
-            <label><span class="ui-text" data-i18n="播放帧率">播放帧率</span></label><strong>10<small> FPS</small></strong>
-          </div>
-        </div>
         <div class="actions">
           <div class="action-card">
             <div id="stepProgress" class="step-segments" role="progressbar"
@@ -88,6 +75,19 @@
           <div>
             <label><span class="ui-text" data-i18n="下一段待执行 · 新按键覆盖">下一段待执行 · 新按键覆盖</span></label
             ><span id="nextAction"><span class="ui-text" data-i18n="等待动作输入">等待动作输入</span></span>
+          </div>
+        </div>
+        <div class="metrics">
+          <div>
+            <label><span class="ui-text" data-i18n="本段生成耗时">本段生成耗时</span></label
+            ><strong id="seconds">—<small> s</small></strong>
+          </div>
+          <div>
+            <label><span class="ui-text" data-i18n="实际生成速度">实际生成速度</span></label
+            ><strong id="fps">—<small> FPS</small></strong>
+          </div>
+          <div>
+            <label><span class="ui-text" data-i18n="播放帧率">播放帧率</span></label><strong>10<small> FPS</small></strong>
           </div>
         </div>
         <p class="footnote"><span class="ui-text" data-i18n="输入动作后才生成，每段 33 帧，以 10 fps 顺序播放。下载录像保持 16 fps； 播放帧率不代表实际生成速度。">
@@ -216,6 +216,6 @@
         <span id="seedFooter">42</span></span
       >
     </footer>
-    <script type="module" src="/static/app.js?v=keys-2"></script>
+    <script type="module" src="/static/app.js?v=layout-3"></script>
   </body>
 </html>
