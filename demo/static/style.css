@@ -310,18 +310,6 @@ button:disabled,
   color: var(--muted);
   margin-bottom: 11px;
 }
-.progress {
-  height: 3px;
-  background: var(--line);
-  border-radius: 5px;
-  overflow: hidden;
-}
-.progress > div {
-  height: 100%;
-  background: var(--accent);
-  width: 0;
-  transition: width 0.3s;
-}
 .metrics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

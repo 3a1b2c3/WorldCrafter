@@ -211,7 +211,6 @@ function state(s) {
   currentState = s.state;
   localizedText($("state"), labels[s.state] || s.state);
   localizedText($("progressText"), `${s.chunks} / ${s.max_chunks} 段`);
-  $("progressBar").style.width = `${(100 * s.chunks) / s.max_chunks}%`;
   localizedText($("currentAction"), actionText(s.active));
   const completed = Math.max(0, Math.min(6, Number(s.completed_steps) || 0));
   localizedText($("stepCount"), `${completed} / 6 步`);
