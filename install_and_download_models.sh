@@ -28,9 +28,9 @@ uv sync --project uvenv --extra demo
 mkdir -p "$REPO_DIR/weights"
 
 echo "[4/4] Downloading model weights with Hugging Face CLI..."
-uv run --project uvenv huggingface-cli download TencentARC/WorldCrafter-Fast --local-dir "$REPO_DIR/weights/WorldCrafter-Fast"
-uv run --project uvenv huggingface-cli download TencentARC/WorldCrafter-Base --local-dir "$REPO_DIR/weights/WorldCrafter-Base"
-uv run --project uvenv huggingface-cli download Qwen/Qwen3-VL-4B-Instruct --local-dir "$REPO_DIR/weights/Qwen3-VL-4B-Instruct"
+uv run --project uvenv hf download TencentARC/WorldCrafter-Fast --local-dir "$REPO_DIR/weights/WorldCrafter-Fast"
+uv run --project uvenv hf download TencentARC/WorldCrafter-Base --local-dir "$REPO_DIR/weights/WorldCrafter-Base"
+uv run --project uvenv hf download Qwen/Qwen3-VL-4B-Instruct --local-dir "$REPO_DIR/weights/Qwen3-VL-4B-Instruct"
 
 echo "Setup complete."
 echo "Model files are in:"
