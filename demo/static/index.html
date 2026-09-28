@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>WorldCrafter · World Explorer</title>
-    <link rel="stylesheet" href="/static/style.css?v=layout-3" />
+    <link rel="stylesheet" href="/static/style.css?v=layout-4" />
   </head>
   <body>
     <header>
@@ -185,16 +185,6 @@
         </div>
       </aside>
       <section class="world-inputs" aria-label="输入图像与世界描述" data-i18n-aria-label="输入图像与世界描述">
-        <div class="scene-inputs">
-          <div class="section-label">YOUR WORLD <span id="presetCount"></span></div>
-          <h2><span class="ui-text" data-i18n="场景预设">场景预设</span></h2>
-          <div id="presetGallery" class="preset-gallery" aria-label="选择输入图像" data-i18n-aria-label="选择输入图像"></div>
-          <label class="upload" for="upload">
-            <span><span class="ui-text" data-i18n="＋ 上传自己的首帧">＋ 上传自己的首帧</span></span>
-            <small><span class="ui-text" data-i18n="自动中心裁剪为 640 × 384">自动中心裁剪为 640 × 384</span></small>
-          </label>
-          <input type="file" id="upload" accept="image/*" hidden />
-        </div>
         <div class="prompt-inputs">
           <div class="section-label">PROMPT</div>
           <label for="prompt"><span class="ui-text" data-i18n="世界描述">世界描述</span></label>
@@ -206,6 +196,18 @@
             <p id="captionStatus" role="status" aria-live="polite"><span class="ui-text" data-i18n="选择视角，自动生成世界描述">选择视角，自动生成世界描述</span></p>
           </div>
           <textarea id="prompt" spellcheck="false" rows="10"></textarea>
+        </div>
+        <div class="upload-inputs">
+          <label class="upload" for="upload">
+            <span><span class="ui-text" data-i18n="＋ 上传自己的首帧">＋ 上传自己的首帧</span></span>
+            <small><span class="ui-text" data-i18n="自动中心裁剪为 640 × 384">自动中心裁剪为 640 × 384</span></small>
+          </label>
+          <input type="file" id="upload" accept="image/*" hidden />
+        </div>
+        <div class="scene-inputs">
+          <div class="section-label">YOUR WORLD <span id="presetCount"></span></div>
+          <h2><span class="ui-text" data-i18n="场景预设">场景预设</span></h2>
+          <div id="presetGallery" class="preset-gallery" aria-label="选择输入图像" data-i18n-aria-label="选择输入图像"></div>
         </div>
       </section>
     </main>
