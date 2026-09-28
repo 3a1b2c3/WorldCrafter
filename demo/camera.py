@@ -3,7 +3,7 @@
 import math
 import numpy as np
 
-from worldcrafter.camera import Action, sample_chunk, relative_poses, DEFAULT_ORBIT_RADIUS
+from worldcrafter.camera import Action, sample_chunk, relative_poses
 
 
 class ControlBuffer:
@@ -28,7 +28,7 @@ class ControlBuffer:
         self.vertical_speed = 2.0
         self.rotation_angle = 30.0
         self.rotation_mode = "look"
-        self.orbit_radius = DEFAULT_ORBIT_RADIUS
+        self.orbit_radius = 1.0
 
     def clear(self):
         self.held = set()
@@ -58,8 +58,6 @@ class ControlBuffer:
             if not math.isfinite(value):
                 raise ValueError("Control setting must be finite")
             low, high = (10.0, 45.0) if kind == "rotation_angle" else (1.0, 5.0)
-            if kind == "orbit_radius":
-                low, high = 0.0, 5.0
             setattr(self, kind, max(low, min(high, value)))
         else:
             raise ValueError("Unknown control")

@@ -1,4 +1,4 @@
-import { localizedText, initLanguage } from "./i18n.js?v=i18n-1";
+import { localizedText, initLanguage } from "./i18n.js?v=orbit-1";
 const $ = (id) => document.getElementById(id);
 const PLAYBACK_FPS = 10;
 const ENCODED_FPS = 16;
@@ -86,10 +86,10 @@ function actionText(a) {
       `${a.up > 0 ? "上浮" : "下降"} ${(Math.abs(a.up) * a.speed).toFixed(1)} m`,
     );
   if (a.yaw)
-    parts.push(`${a.yaw > 0 ? "右转" : "左转"} ${Math.abs(a.yaw).toFixed(0)}°`);
+    parts.push(`${a.orbit ? (a.yaw > 0 ? "向右环绕转向" : "向左环绕转向") : (a.yaw > 0 ? "右转" : "左转")} ${Math.abs(a.yaw).toFixed(0)}°`);
   if (a.pitch)
     parts.push(
-      `${a.pitch > 0 ? "抬头" : "低头"} ${Math.abs(a.pitch).toFixed(0)}°`,
+      `${a.orbit ? (a.pitch > 0 ? "向上环绕转向" : "向下环绕转向") : (a.pitch > 0 ? "抬头" : "低头")} ${Math.abs(a.pitch).toFixed(0)}°`,
     );
   if (a.orbit) parts.push(`Orbit · 半径 ${a.orbit_radius.toFixed(1)} m`);
   return parts.join(" · ") || "静止";
@@ -369,7 +369,17 @@ for (const type of ["pause", "resume", "reset", "stop"])
     if (type === "reset" || type === "stop") clearKeys();
     send({ type });
   });
+function refreshRotationMode() {
+  const orbit = $("rotationMode").value === "orbit";
+  $("orbitSettings").hidden = !orbit;
+  $("orbitRadius").disabled = !orbit;
+  localizedText($("rotationHint"), orbit
+    ? "环绕前方虚拟中心，并始终朝向它。半径决定中心距离；方向键表示视线转向。"
+    : "仅改变朝向，相机位置保持不变。方向键控制 Yaw / Pitch。");
+}
+refreshRotationMode();
 $("rotationMode").addEventListener("change", () => {
+  refreshRotationMode();
   send({ type: "rotation_mode", value: $("rotationMode").value });
 });
 $("orbitRadius").addEventListener("input", () => {

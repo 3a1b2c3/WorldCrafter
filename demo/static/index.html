@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>WorldCrafter · World Explorer</title>
-    <link rel="stylesheet" href="/static/style.css?v=i18n-1" />
+    <link rel="stylesheet" href="/static/style.css?v=orbit-1" />
   </head>
   <body>
     <header>
@@ -146,11 +146,14 @@
         />
         <label for="rotationMode"><span class="ui-text" data-i18n="旋转模式">旋转模式</span></label>
         <select id="rotationMode">
-          <option value="look" data-i18n="Look · 原地转头">Look · 原地转头</option>
-          <option value="orbit" data-i18n="Orbit · 环绕">Orbit · 环绕</option>
+          <option value="look" data-i18n="Look · 原地旋转（Yaw / Pitch）">Look · Yaw / Pitch in place</option>
+          <option value="orbit" data-i18n="Orbit · 绕中心环绕">Orbit · rotate around a pivot</option>
         </select>
-        <label for="orbitRadius"><span class="ui-text" data-i18n="Orbit 半径">Orbit 半径 </span><span id="orbitRadiusLabel">2.0</span></label>
-        <input id="orbitRadius" type="range" min="0" max="5" step="0.1" value="2" />
+        <p id="rotationHint" class="rotation-hint"></p>
+        <div id="orbitSettings" hidden>
+          <label for="orbitRadius"><span class="ui-text" data-i18n="Orbit 半径">Orbit radius</span><span id="orbitRadiusLabel">1.0</span></label>
+          <input id="orbitRadius" type="range" min="1" max="5" step="0.1" value="1" disabled />
+        </div>
         <label for="rotationAngle"
           ><span class="ui-text" data-i18n="方向键旋转角度">方向键旋转角度 </span><span id="rotationAngleLabel"><span class="ui-text" data-i18n="30° / 段">30° / 段</span></span></label
         >
@@ -220,6 +223,6 @@
         <span id="seedFooter">42</span></span
       >
     </footer>
-    <script type="module" src="/static/app.js?v=i18n-1"></script>
+    <script type="module" src="/static/app.js?v=orbit-1"></script>
   </body>
 </html>

@@ -433,12 +433,14 @@ aside {
   padding-left: 20px;
 }
 aside > label,
+#orbitSettings > label,
 .two-cols label {
   font-size: 12px;
   display: block;
   margin: 16px 0 9px;
 }
-aside > label > span:not(.ui-text) {
+aside > label > span:not(.ui-text),
+#orbitSettings > label > span:not(.ui-text) {
   font-size: 10px;
   color: var(--muted);
   float: right;
@@ -515,6 +517,12 @@ input[type="range"] {
   justify-content: space-between;
   font-size: 10px;
   color: var(--muted);
+}
+.rotation-hint {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 10px 0;
 }
 .control-help {
   margin-top: 28px;

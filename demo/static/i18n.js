@@ -34,8 +34,14 @@ const messages = {
   "快速移动": "Faster",
   "Q/E 升降速度": "Q/E vertical movement",
   "旋转模式": "Rotation mode",
-  "Look · 原地转头": "Look · turn in place",
-  "Orbit · 环绕": "Orbit · move around a pivot",
+  "Look · 原地旋转（Yaw / Pitch）": "Look · Yaw / Pitch in place",
+  "Orbit · 绕中心环绕": "Orbit · rotate around a pivot",
+  "仅改变朝向，相机位置保持不变。方向键控制 Yaw / Pitch。": "Turn in place without moving the camera. Arrow keys control yaw and pitch.",
+  "环绕前方虚拟中心，并始终朝向它。半径决定中心距离；方向键表示视线转向。": "Move around a virtual pivot ahead while facing it. Radius sets the pivot distance; arrow keys specify the viewing turn.",
+  "向右环绕转向": "Orbit with a right turn",
+  "向左环绕转向": "Orbit with a left turn",
+  "向上环绕转向": "Orbit with an upward turn",
+  "向下环绕转向": "Orbit with a downward turn",
   "Orbit 半径": "Orbit radius",
   "方向键旋转角度": "Arrow-key turn angle",
   "精细调整 · 10°": "Fine · 10°",
@@ -119,7 +125,7 @@ export function translate(source) {
   for (const [pattern, replacement] of templates)
     if (pattern.test(key)) return key.replace(pattern, replacement);
   if (key.includes(" · ")) return key.split(" · ").map(translate).join(" · ");
-  const action = key.match(/^(前进|后退|左移|右移|上浮|下降|抬头|低头|左转|右转) (.*)$/);
+  const action = key.match(/^(前进|后退|左移|右移|上浮|下降|抬头|低头|左转|右转|向右环绕转向|向左环绕转向|向上环绕转向|向下环绕转向) (.*)$/);
   if (action) return `${messages[action[1]]} ${action[2]}`;
   return source;
 }
