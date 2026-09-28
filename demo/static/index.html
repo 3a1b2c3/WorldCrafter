@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>WorldCrafter · World Explorer</title>
-    <link rel="stylesheet" href="/static/style.css?v=orbit-1" />
+    <link rel="stylesheet" href="/static/style.css?v=ijkl-1" />
   </head>
   <body>
     <header>
@@ -24,7 +24,7 @@
         <div
           id="viewport"
           tabindex="0"
-          aria-label="交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角" data-i18n-aria-label="交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角"
+          aria-label="交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角，IJKL 环绕" data-i18n-aria-label="交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角，IJKL 环绕"
         >
           <img id="preview" alt="实际输入首帧，640 × 384" data-i18n-alt="实际输入首帧，640 × 384" /><video
             id="video0"
@@ -49,7 +49,7 @@
               </span><kbd>Q</kbd><kbd>E</kbd><span class="ui-text" data-i18n="升降"> 升降</span></span
             ><span
               ><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><span class="ui-text" data-i18n="转向"> 转向
-              </span><small><span class="ui-text" data-i18n="Space 暂停/继续">Space 暂停/继续</span></small></span
+              </span><span class="orbit-shortcut">IJKL Orbit</span> <small><span class="ui-text" data-i18n="Space 暂停/继续">Space 暂停/继续</span></small></span
             >
           </div>
         </div>
@@ -144,18 +144,13 @@
           step="0.1"
           value="2"
         />
-        <label for="rotationMode"><span class="ui-text" data-i18n="旋转模式">旋转模式</span></label>
-        <select id="rotationMode">
-          <option value="look" data-i18n="Look · 原地旋转（Yaw / Pitch）">Look · Yaw / Pitch in place</option>
-          <option value="orbit" data-i18n="Orbit · 绕中心环绕">Orbit · rotate around a pivot</option>
-        </select>
-        <p id="rotationHint" class="rotation-hint"></p>
-        <div id="orbitSettings" hidden>
+        <p class="rotation-hint" data-i18n="方向键原地转头；I/J/K/L 向上/左/下/右环绕前方虚拟中心。">Arrow keys turn in place; I/J/K/L orbit up/left/down/right around a virtual pivot ahead.</p>
+        <div id="orbitSettings">
           <label for="orbitRadius"><span class="ui-text" data-i18n="Orbit 半径">Orbit radius</span><span id="orbitRadiusLabel">1.0</span></label>
-          <input id="orbitRadius" type="range" min="1" max="5" step="0.1" value="1" disabled />
+          <input id="orbitRadius" type="range" min="1" max="5" step="0.1" value="1" />
         </div>
         <label for="rotationAngle"
-          ><span class="ui-text" data-i18n="方向键旋转角度">方向键旋转角度 </span><span id="rotationAngleLabel"><span class="ui-text" data-i18n="30° / 段">30° / 段</span></span></label
+          ><span class="ui-text" data-i18n="旋转角度（方向键 / IJKL）">旋转角度（方向键 / IJKL） </span><span id="rotationAngleLabel"><span class="ui-text" data-i18n="30° / 段">30° / 段</span></span></label
         >
         <input
           id="rotationAngle"
@@ -175,7 +170,10 @@
             </span><kbd>D</kbd><span class="ui-text" data-i18n="右移"> 右移</span><br /><kbd>Q</kbd><span class="ui-text" data-i18n="上浮"> 上浮 </span><kbd>E</kbd><span class="ui-text" data-i18n="下降"> 下降</span><br />
             <kbd>↑</kbd><span class="ui-text" data-i18n="抬头"> 抬头 </span><kbd>↓</kbd><span class="ui-text" data-i18n="低头"> 低头</span><br /><kbd>←</kbd><span class="ui-text" data-i18n="左转"> 左转
             </span><kbd>→</kbd><span class="ui-text" data-i18n="右转"> 右转
-          </span></p>
+          </span><br />
+            <kbd>I</kbd><span data-i18n="向上环绕">Orbit up</span> <kbd>K</kbd><span data-i18n="向下环绕">Orbit down</span><br />
+            <kbd>J</kbd><span data-i18n="向左环绕">Orbit left</span> <kbd>L</kbd><span data-i18n="向右环绕">Orbit right</span>
+          </p>
           <p><span class="ui-text" data-i18n="一段只执行一个按键动作。下一段开始前，新按键随时覆盖旧输入；开始后锁定本段动作。 短按生效一段，长按连续生效，没有待执行动作时停止生成。被覆盖的旧键不会自动恢复。">
             一段只执行一个按键动作。下一段开始前，新按键随时覆盖旧输入；开始后锁定本段动作。
             短按生效一段，长按连续生效，没有待执行动作时停止生成。被覆盖的旧键不会自动恢复。
@@ -223,6 +221,6 @@
         <span id="seedFooter">42</span></span
       >
     </footer>
-    <script type="module" src="/static/app.js?v=orbit-1"></script>
+    <script type="module" src="/static/app.js?v=ijkl-1"></script>
   </body>
 </html>

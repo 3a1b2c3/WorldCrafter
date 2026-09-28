@@ -52,9 +52,8 @@ class OrbitTests(unittest.TestCase):
 
     def test_controls_and_limits(self):
         controls = ControlBuffer()
-        controls.update(dict(type="rotation_mode", value="orbit"))
         controls.update(dict(type="orbit_radius", value=2))
-        controls.update(dict(type="key", key="arrowleft", down=True))
+        controls.update(dict(type="key", key="j", down=True))
         action = controls.consume()
         self.assertTrue(action.orbit)
         self.assertEqual(action.orbit_radius, 2)

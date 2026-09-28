@@ -69,7 +69,6 @@ class Session:
                 speed=self.controls.speed,
                 vertical_speed=self.controls.vertical_speed,
                 rotation_angle=self.controls.rotation_angle,
-                rotation_mode=self.controls.rotation_mode,
                 orbit_radius=self.controls.orbit_radius,
             ),
             generation_s=last.get("generation_s"),
@@ -231,7 +230,7 @@ class Manager:
             if s is not self.active or s.stopped:
                 raise ValueError("Session is no longer active")
             kind = message.get("type")
-            if kind in ("key", "speed", "vertical_speed", "rotation_angle", "rotation_mode", "orbit_radius", "blur"):
+            if kind in ("key", "speed", "vertical_speed", "rotation_angle", "orbit_radius", "blur"):
                 s.controls.update(message)
             elif kind == "playback_started":
                 if not isinstance(message.get("chunk_index"), int):

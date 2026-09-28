@@ -24,9 +24,8 @@ class DemoControlsTest(unittest.TestCase):
             controls.update(dict(type="orbit_radius", value=radius))
             camera = Camera()
             for mode in ("look", "orbit", "look"):
-                controls.update(dict(type="rotation_mode", value=mode))
                 center = camera.world[:3, 3] + radius * camera.world[:3, 2]
-                for key in ("arrowright", "arrowup", "arrowleft", "arrowdown"):
+                for key in (("l", "i", "j", "k") if mode == "orbit" else ("arrowright", "arrowup", "arrowleft", "arrowdown")):
                     controls.clear()
                     controls.update(dict(type="key", key=key, down=True))
                     start = camera.world.copy()
@@ -43,15 +42,23 @@ class DemoControlsTest(unittest.TestCase):
                         np.testing.assert_allclose(np.linalg.norm(poses[:, :, 3] - center, axis=1), radius, atol=1e-6)
                         self.assertGreater(np.linalg.norm(camera.world[:3, 3] - start[:3, 3]), 0.1)
 
+    def test_orbit_keys_move_camera_in_the_named_direction(self):
+        for key, axis, sign in (("j", 0, -1), ("l", 0, 1), ("i", 1, -1), ("k", 1, 1)):
+            controls = ControlBuffer()
+            controls.update(dict(type="key", key=key, down=True))
+            camera = Camera()
+            camera.append(controls.consume())
+            self.assertGreater(sign * camera.world[axis, 3], 0.1)
+            np.testing.assert_allclose(camera.world[:3, 3] + camera.world[:3, 2], [0, 0, 1], atol=1e-12)
+
     def test_45_degree_rotation_reaches_camera(self):
         for mode in ("look", "orbit"):
-            for key in ("arrowright", "arrowup"):
+            for key in (("l", "i") if mode == "orbit" else ("arrowright", "arrowup")):
                 controls = ControlBuffer()
-                controls.update(dict(type="rotation_mode", value=mode))
                 controls.update(dict(type="rotation_angle", value=45))
                 controls.update(dict(type="key", key=key, down=True))
                 action = controls.consume()
-                self.assertEqual(action.yaw or action.pitch, 45)
+                self.assertEqual(abs(action.yaw or action.pitch), 45)
                 camera = Camera()
                 local, global_poses = camera.append(action)
                 self.assertEqual(global_poses.shape, (33, 3, 4))

@@ -1,7 +1,8 @@
 // Interface language is independent of the English inference prompt.
 const messages = {
+  "方向键原地转头；I/J/K/L 向上/左/下/右环绕前方虚拟中心。": "Arrow keys turn in place; I/J/K/L orbit up/left/down/right around a virtual pivot ahead.",
   "正在连接服务": "Connecting",
-  "交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角": "Interactive view: WASD to move, Q/E to move up/down, arrow keys to turn",
+  "交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角，IJKL 环绕": "Interactive view: WASD to move, Q/E to move up/down, arrow keys to turn, IJKL to orbit",
   "实际输入首帧，640 × 384": "Input image, 640 × 384",
   "从一帧，走进世界": "Explore a world from one image",
   "选择场景，开始探索": "Choose a scene and start exploring",
@@ -33,17 +34,12 @@ const messages = {
   "慢速探索": "Slower",
   "快速移动": "Faster",
   "Q/E 升降速度": "Q/E vertical movement",
-  "旋转模式": "Rotation mode",
-  "Look · 原地旋转（Yaw / Pitch）": "Look · Yaw / Pitch in place",
-  "Orbit · 绕中心环绕": "Orbit · rotate around a pivot",
-  "仅改变朝向，相机位置保持不变。方向键控制 Yaw / Pitch。": "Turn in place without moving the camera. Arrow keys control yaw and pitch.",
-  "环绕前方虚拟中心，并始终朝向它。半径决定中心距离；方向键表示视线转向。": "Move around a virtual pivot ahead while facing it. Radius sets the pivot distance; arrow keys specify the viewing turn.",
-  "向右环绕转向": "Orbit with a right turn",
-  "向左环绕转向": "Orbit with a left turn",
-  "向上环绕转向": "Orbit with an upward turn",
-  "向下环绕转向": "Orbit with a downward turn",
+  "向右环绕": "Orbit right",
+  "向左环绕": "Orbit left",
+  "向上环绕": "Orbit up",
+  "向下环绕": "Orbit down",
   "Orbit 半径": "Orbit radius",
-  "方向键旋转角度": "Arrow-key turn angle",
+  "旋转角度（方向键 / IJKL）": "Turn angle (arrows / IJKL)",
   "精细调整 · 10°": "Fine · 10°",
   "大幅转向 · 45°": "Wide · 45°",
   "让视角跟随你": "Camera controls",
@@ -78,7 +74,7 @@ const messages = {
   "正在加载常驻模型": "Loading model",
   "正在编码首帧与描述": "Encoding image and description",
   "等待下一段": "Waiting for the next chunk",
-  "等待动作输入 · WASD / QE / 方向键": "Waiting for input · WASD / QE / arrow keys",
+  "等待动作输入 · WASD / QE / 方向键 / IJKL": "Waiting for input · WASD / QE / arrow keys / IJKL",
   "正在生成": "Generating",
   "本段完成后暂停": "Pausing after this chunk",
   "已暂停": "Paused",
@@ -125,7 +121,7 @@ export function translate(source) {
   for (const [pattern, replacement] of templates)
     if (pattern.test(key)) return key.replace(pattern, replacement);
   if (key.includes(" · ")) return key.split(" · ").map(translate).join(" · ");
-  const action = key.match(/^(前进|后退|左移|右移|上浮|下降|抬头|低头|左转|右转|向右环绕转向|向左环绕转向|向上环绕转向|向下环绕转向) (.*)$/);
+  const action = key.match(/^(前进|后退|左移|右移|上浮|下降|抬头|低头|左转|右转|向右环绕|向左环绕|向上环绕|向下环绕) (.*)$/);
   if (action) return `${messages[action[1]]} ${action[2]}`;
   return source;
 }

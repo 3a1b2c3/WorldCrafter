@@ -9,6 +9,8 @@ from worldcrafter.camera import Action, sample_chunk, relative_poses
 class ControlBuffer:
     """Latest fresh keydown wins until consume; never resume an overridden key."""
 
+    ORBIT_KEYS = {"i", "j", "k", "l"}
+
     KEYS = {
         "w": ("forward", 1),
         "s": ("forward", -1),
@@ -20,6 +22,11 @@ class ControlBuffer:
         "arrowright": ("yaw", 1),
         "arrowup": ("pitch", 1),
         "arrowdown": ("pitch", -1),
+        # Orbit keys describe camera movement, opposite to the viewing turn.
+        "j": ("yaw", 1),
+        "l": ("yaw", -1),
+        "i": ("pitch", -1),
+        "k": ("pitch", 1),
     }
 
     def __init__(self):
@@ -27,7 +34,6 @@ class ControlBuffer:
         self.speed = 2.0
         self.vertical_speed = 2.0
         self.rotation_angle = 30.0
-        self.rotation_mode = "look"
         self.orbit_radius = 1.0
 
     def clear(self):
@@ -49,10 +55,6 @@ class ControlBuffer:
                 self.held.add(key)
             else:
                 self.held.discard(key)
-        elif kind == "rotation_mode":
-            if message["value"] not in ("look", "orbit"):
-                raise ValueError("Rotation mode must be look or orbit")
-            self.rotation_mode = message["value"]
         elif kind in ("speed", "vertical_speed", "rotation_angle", "orbit_radius"):
             value = float(message["value"])
             if not math.isfinite(value):
@@ -71,7 +73,7 @@ class ControlBuffer:
         field, sign = self.KEYS[key]
         value = sign * self.rotation_angle if field in ("yaw", "pitch") else sign
         speed = self.vertical_speed if field == "up" else self.speed
-        orbit = self.rotation_mode == "orbit" and field in ("yaw", "pitch")
+        orbit = key in self.ORBIT_KEYS
         return Action(
             **{field: value}, speed=speed,
             orbit=orbit, orbit_radius=self.orbit_radius if orbit else 0.0,
