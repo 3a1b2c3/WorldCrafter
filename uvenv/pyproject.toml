@@ -4,10 +4,11 @@ version = "0.1.0"
 description = "Reproducible inference environment for WorldCrafter"
 requires-python = ">=3.11,<3.12"
 dependencies = [
-    "worldcrafter[xformers]",
+    "worldcrafter",
+    "worldcrafter[xformers] ; platform_machine == 'x86_64'",
     "torch==2.10.0+cu128",
     "torchvision==0.25.0+cu128",
-    "flash-attn-3==3.0.0",
+    "flash-attn-3==3.0.0 ; platform_machine == 'x86_64'",
 ]
 
 [project.optional-dependencies]

@@ -23,7 +23,7 @@ if ! command -v ffmpeg >/dev/null 2>&1; then
 fi
 
 echo "[3/4] Installing Python dependencies with uv..."
-uv sync --project uvenv --frozen --extra demo
+uv sync --project uvenv --extra demo
 
 mkdir -p "$REPO_DIR/weights"
 
