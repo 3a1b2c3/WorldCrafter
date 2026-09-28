@@ -10,7 +10,7 @@ from .caption import AUTO_PROMPTS, DEFAULT_CAPTION_MODEL
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MODEL = ROOT / "weights" / "WorldCrafter-Base"
-DEFAULT_I2V_CASE = ROOT / "test" / "I2V" / "00_cat_vac"
+DEFAULT_I2V_CASE = ROOT / "test" / "I2V" / "00_cat_robot_vacuum"
 DEFAULT_T2V_CASE = ROOT / "test" / "T2V" / "00_red_balloon"
 DEFAULT_IMAGE = DEFAULT_I2V_CASE / "image.png"
 DEFAULT_I2V_CAMERA = DEFAULT_I2V_CASE / "camera.npy"

@@ -479,9 +479,8 @@ window.addEventListener("beforeunload", () => ws?.close());
       const image = document.createElement("img");
       image.src = p.image;
       image.alt = p.name;
-      const name = document.createElement("span");
-      name.textContent = p.name;
-      button.append(image, name);
+      button.setAttribute("aria-label", p.name);
+      button.append(image);
       button.addEventListener("click", () => {
         presetId = p.id;
         changePreset();

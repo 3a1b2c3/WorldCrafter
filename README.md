@@ -99,15 +99,15 @@ Run with the Base or distilled Fast model:
 ```bash
 # Base
 python inference.py --model-type base --mode i2v \
-  --image-path test/I2V/00_cat_vac/image.png \
-  --prompt test/I2V/00_cat_vac/prompt.txt \
-  --camera-path test/I2V/00_cat_vac/camera.npy
+  --image-path test/I2V/00_cat_robot_vacuum/image.png \
+  --prompt test/I2V/00_cat_robot_vacuum/prompt.txt \
+  --camera-path test/I2V/00_cat_robot_vacuum/camera.npy
 
 # Fast
 python inference.py --model-type fast --mode i2v \
-  --image-path test/I2V/06_waterfall/image.png \
-  --prompt test/I2V/06_waterfall/prompt.txt \
-  --camera-path test/I2V/06_waterfall/camera.npy
+  --image-path test/I2V/03_waterfall/image.png \
+  --prompt test/I2V/03_waterfall/prompt.txt \
+  --camera-path test/I2V/03_waterfall/camera.npy
 ```
 
 
@@ -119,15 +119,15 @@ to automatically write the prompt. For example:
 ```bash
 # Base
 python inference.py --model-type base --mode i2v \
-  --image-path test/I2V/00_cat_vac/image.png \
+  --image-path test/I2V/00_cat_robot_vacuum/image.png \
   --prompt auto-third-person \
-  --camera-path test/I2V/00_cat_vac/camera.npy
+  --camera-path test/I2V/00_cat_robot_vacuum/camera.npy
 
 # Fast
 python inference.py --model-type fast --mode i2v \
-  --image-path test/I2V/06_waterfall/image.png \
+  --image-path test/I2V/03_waterfall/image.png \
   --prompt auto-first-person \
-  --camera-path test/I2V/06_waterfall/camera.npy
+  --camera-path test/I2V/03_waterfall/camera.npy
 ```
 
 ### 2. Text-to-video
