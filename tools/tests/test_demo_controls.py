@@ -9,7 +9,7 @@ class DemoControlsTest(unittest.TestCase):
     def test_defaults_and_slider_bounds(self):
         controls = ControlBuffer()
         self.assertEqual((controls.speed, controls.vertical_speed, controls.rotation_angle), (2, 2, 30))
-        self.assertEqual(controls.orbit_radius, 1)
+        self.assertEqual(controls.orbit_radius, 2)
         for setting, low, high in (
             ("speed", 1, 5), ("vertical_speed", 1, 5),
             ("rotation_angle", 10, 45), ("orbit_radius", 1, 5),
@@ -49,7 +49,7 @@ class DemoControlsTest(unittest.TestCase):
             camera = Camera()
             camera.append(controls.consume())
             self.assertGreater(sign * camera.world[axis, 3], 0.1)
-            np.testing.assert_allclose(camera.world[:3, 3] + camera.world[:3, 2], [0, 0, 1], atol=1e-12)
+            np.testing.assert_allclose(camera.world[:3, 3] + controls.orbit_radius * camera.world[:3, 2], [0, 0, controls.orbit_radius], atol=1e-12)
 
     def test_45_degree_rotation_reaches_camera(self):
         for mode in ("look", "orbit"):

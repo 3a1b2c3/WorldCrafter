@@ -34,7 +34,7 @@ class ControlBuffer:
         self.speed = 2.0
         self.vertical_speed = 2.0
         self.rotation_angle = 30.0
-        self.orbit_radius = 1.0
+        self.orbit_radius = 2.0
 
     def clear(self):
         self.held = set()
