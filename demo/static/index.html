@@ -1,16 +1,19 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>WorldCrafter · World Explorer</title>
-    <link rel="stylesheet" href="/static/style.css?v=worldcrafter-layout-1" />
+    <link rel="stylesheet" href="/static/style.css?v=i18n-1" />
   </head>
   <body>
     <header>
       <a class="brand" href="/">✳ <b>WorldCrafter</b><span>WORLD EXPLORER</span></a>
+      <div class="header-controls">
+        <select id="language" aria-label="Language / 语言" data-i18n-aria-label="Language / 语言"><option value="en">English</option><option value="zh" data-i18n="中文">中文</option></select>
       <div class="connection">
-        <i id="connectionDot"></i><span id="connection">正在连接服务</span>
+        <i id="connectionDot"></i><span id="connection"><span class="ui-text" data-i18n="正在连接服务">正在连接服务</span></span>
+      </div>
       </div>
     </header>
     <main>
@@ -21,9 +24,9 @@
         <div
           id="viewport"
           tabindex="0"
-          aria-label="交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角"
+          aria-label="交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角" data-i18n-aria-label="交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角"
         >
-          <img id="preview" alt="实际输入首帧，640 × 384" /><video
+          <img id="preview" alt="实际输入首帧，640 × 384" data-i18n-alt="实际输入首帧，640 × 384" /><video
             id="video0"
             muted
             playsinline
@@ -32,85 +35,77 @@
           ><video id="video1" muted playsinline preload="auto"></video>
           <div id="emptyState">
             <span class="orb">✳</span>
-            <h1>从一帧，走进世界</h1>
-            <p>选择场景，开始探索</p>
+            <h1><span class="ui-text" data-i18n="从一帧，走进世界">从一帧，走进世界</span></h1>
+            <p><span class="ui-text" data-i18n="选择场景，开始探索">选择场景，开始探索</span></p>
           </div>
           <div class="viewport-top">
             <span id="sceneName">Socrates</span
-            ><span id="playbackLabel">首帧预览</span>
+            ><span id="playbackLabel"><span class="ui-text" data-i18n="首帧预览">首帧预览</span></span>
           </div>
-          <div id="waitLabel">等待下一段 · 保持当前画面</div>
+          <div id="waitLabel"><span class="ui-text" data-i18n="等待下一段 · 保持当前画面">等待下一段 · 保持当前画面</span></div>
           <div class="viewport-bottom">
             <span
-              ><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动 ·
-              <kbd>Q</kbd><kbd>E</kbd> 升降</span
+              ><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span class="ui-text" data-i18n="移动 ·"> 移动 ·
+              </span><kbd>Q</kbd><kbd>E</kbd><span class="ui-text" data-i18n="升降"> 升降</span></span
             ><span
-              ><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> 转向
-              <small>Space 暂停/继续</small></span
+              ><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><span class="ui-text" data-i18n="转向"> 转向
+              </span><small><span class="ui-text" data-i18n="Space 暂停/继续">Space 暂停/继续</span></small></span
             >
           </div>
         </div>
         <div class="transport">
-          <button id="start" class="primary">开始探索 <span>↗</span></button
-          ><button id="pause" disabled>暂停</button
-          ><button id="resume" disabled>继续</button
-          ><button id="reset" disabled>重新开始</button
-          ><button id="stop" disabled>停止</button
-          ><a id="download" class="button" aria-disabled="true">↓ 下载录像</a>
+          <button id="start" class="primary" disabled><span class="ui-text" data-i18n="开始探索">开始探索 </span><span>↗</span></button
+          ><button id="pause" disabled><span class="ui-text" data-i18n="暂停">暂停</span></button
+          ><button id="resume" disabled><span class="ui-text" data-i18n="继续">继续</span></button
+          ><button id="reset" disabled><span class="ui-text" data-i18n="重新开始">重新开始</span></button
+          ><button id="stop" disabled><span class="ui-text" data-i18n="停止">停止</span></button
+          ><a id="download" class="button" aria-disabled="true"><span class="ui-text" data-i18n="↓ 下载录像">↓ 下载录像</span></a>
         </div>
         <div class="progress-row">
-          <span id="state">准备就绪</span
-          ><span id="progressText">0 / 50 段</span>
+          <span id="state"><span class="ui-text" data-i18n="准备就绪">准备就绪</span></span
+          ><span id="progressText"><span class="ui-text" data-i18n="0 / 50 段">0 / 50 段</span></span>
         </div>
         <div class="progress"><div id="progressBar"></div></div>
         <div class="metrics">
           <div>
-            <label>本段生成耗时</label
+            <label><span class="ui-text" data-i18n="本段生成耗时">本段生成耗时</span></label
             ><strong id="seconds">—<small> s</small></strong>
           </div>
           <div>
-            <label>实际生成速度</label
+            <label><span class="ui-text" data-i18n="实际生成速度">实际生成速度</span></label
             ><strong id="fps">—<small> FPS</small></strong>
           </div>
           <div>
-            <label>播放帧率</label><strong>10<small> FPS</small></strong>
+            <label><span class="ui-text" data-i18n="播放帧率">播放帧率</span></label><strong>10<small> FPS</small></strong>
           </div>
         </div>
         <div class="actions">
           <div class="action-card">
             <div id="stepProgress" class="step-segments" role="progressbar"
-              aria-label="当前段生成步数" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0">
+              aria-label="当前段生成步数" data-i18n-aria-label="当前段生成步数" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0">
               <i></i><i></i><i></i><i></i><i></i><i></i>
             </div>
             <div class="action-content">
-              <label>当前生成动作 <span id="stepCount">0 / 6 步</span></label>
-              <span id="currentAction">等待开始</span>
+              <label><span class="ui-text" data-i18n="当前生成动作">当前生成动作 </span><span id="stepCount"><span class="ui-text" data-i18n="0 / 6 步">0 / 6 步</span></span></label>
+              <span id="currentAction"><span class="ui-text" data-i18n="等待开始">等待开始</span></span>
             </div>
           </div>
           <div>
-            <label>下一段待执行 · 新按键覆盖</label
-            ><span id="nextAction">等待动作输入</span>
+            <label><span class="ui-text" data-i18n="下一段待执行 · 新按键覆盖">下一段待执行 · 新按键覆盖</span></label
+            ><span id="nextAction"><span class="ui-text" data-i18n="等待动作输入">等待动作输入</span></span>
           </div>
         </div>
-        <p class="footnote">
+        <p class="footnote"><span class="ui-text" data-i18n="输入动作后才生成，每段 33 帧，以 10 fps 顺序播放。下载录像保持 16 fps； 播放帧率不代表实际生成速度。">
           输入动作后才生成，每段 33 帧，以 10 fps 顺序播放。下载录像保持 16 fps；
           播放帧率不代表实际生成速度。
-        </p>
+        </span></p>
         <div id="error" role="alert" hidden></div>
       </section>
       <aside>
-        <div class="section-label">YOUR WORLD <span id="presetCount">01 — 06</span></div>
-        <label for="preset">场景预设</label
-        ><select id="preset"></select>
-        <label class="upload" for="upload"
-          ><span>＋ 上传自己的首帧</span
-          ><small>自动中心裁剪为 640 × 384</small></label
-        ><input type="file" id="upload" accept="image/*" hidden />
-        <label for="prompt">世界描述 <span>PROMPT</span></label
-        ><textarea id="prompt" spellcheck="false" rows="9"></textarea>
+        <div class="section-label">CAMERA CONTROLS</div>
         <div class="two-cols">
           <div>
-            <label for="seed">随机种子</label
+            <label for="seed"><span class="ui-text" data-i18n="随机种子">随机种子</span></label
             ><input
               id="seed"
               type="number"
@@ -120,79 +115,103 @@
             />
           </div>
           <div>
-            <label for="maxChunks">最大段数</label
+            <label for="maxChunks"><span class="ui-text" data-i18n="最大段数">最大段数</span></label
             ><input id="maxChunks" type="number" min="1" max="50" value="50" />
           </div>
         </div>
         <hr />
         <label for="speed"
-          >WASD 移动速度 <span id="speedLabel">1.0 米 / 段</span></label
+          ><span class="ui-text" data-i18n="WASD 移动速度">WASD 移动速度 </span><span id="speedLabel"><span class="ui-text" data-i18n="2.0 米 / 段">2.0 米 / 段</span></span></label
         ><input
           id="speed"
           type="range"
-          min="0.1"
+          min="1"
           max="5"
           step="0.1"
-          value="1"
+          value="2"
         />
         <div class="range-label">
-          <span>慢速探索</span><span>快速移动</span>
+          <span><span class="ui-text" data-i18n="慢速探索">慢速探索</span></span><span><span class="ui-text" data-i18n="快速移动">快速移动</span></span>
         </div>
         <label for="verticalSpeed"
-          >Q/E 升降速度 <span id="verticalSpeedLabel">1.0 米 / 段</span></label
+          ><span class="ui-text" data-i18n="Q/E 升降速度">Q/E 升降速度 </span><span id="verticalSpeedLabel"><span class="ui-text" data-i18n="2.0 米 / 段">2.0 米 / 段</span></span></label
         >
         <input
           id="verticalSpeed"
           type="range"
-          min="0.1"
+          min="1"
           max="5"
           step="0.1"
-          value="1"
+          value="2"
         />
-        <label for="rotationMode">旋转模式</label>
+        <label for="rotationMode"><span class="ui-text" data-i18n="旋转模式">旋转模式</span></label>
         <select id="rotationMode">
-          <option value="look">Look · 原地转头</option>
-          <option value="orbit">Orbit · 环绕</option>
+          <option value="look" data-i18n="Look · 原地转头">Look · 原地转头</option>
+          <option value="orbit" data-i18n="Orbit · 环绕">Orbit · 环绕</option>
         </select>
-        <label for="orbitRadius">Orbit 半径 <span id="orbitRadiusLabel">2.0</span></label>
+        <label for="orbitRadius"><span class="ui-text" data-i18n="Orbit 半径">Orbit 半径 </span><span id="orbitRadiusLabel">2.0</span></label>
         <input id="orbitRadius" type="range" min="0" max="5" step="0.1" value="2" />
         <label for="rotationAngle"
-          >方向键旋转角度 <span id="rotationAngleLabel">15° / 段</span></label
+          ><span class="ui-text" data-i18n="方向键旋转角度">方向键旋转角度 </span><span id="rotationAngleLabel"><span class="ui-text" data-i18n="30° / 段">30° / 段</span></span></label
         >
         <input
           id="rotationAngle"
           type="range"
-          min="1"
-          max="30"
+          min="10"
+          max="45"
           step="1"
-          value="15"
+          value="30"
         />
         <div class="range-label">
-          <span>精细调整 · 1°</span><span>大幅转向 · 30°</span>
+          <span><span class="ui-text" data-i18n="精细调整 · 10°">精细调整 · 10°</span></span><span><span class="ui-text" data-i18n="大幅转向 · 45°">大幅转向 · 45°</span></span>
         </div>
         <div class="control-help">
-          <h3>让视角跟随你</h3>
+          <h3><span class="ui-text" data-i18n="让视角跟随你">让视角跟随你</span></h3>
           <p>
-            <kbd>W</kbd> 前进 <kbd>S</kbd> 后退<br /><kbd>A</kbd> 左移
-            <kbd>D</kbd> 右移<br /><kbd>Q</kbd> 上浮 <kbd>E</kbd> 下降<br />
-            <kbd>↑</kbd> 抬头 <kbd>↓</kbd> 低头<br /><kbd>←</kbd> 左转
-            <kbd>→</kbd> 右转
-          </p>
-          <p>
+            <kbd>W</kbd><span class="ui-text" data-i18n="前进"> 前进 </span><kbd>S</kbd><span class="ui-text" data-i18n="后退"> 后退</span><br /><kbd>A</kbd><span class="ui-text" data-i18n="左移"> 左移
+            </span><kbd>D</kbd><span class="ui-text" data-i18n="右移"> 右移</span><br /><kbd>Q</kbd><span class="ui-text" data-i18n="上浮"> 上浮 </span><kbd>E</kbd><span class="ui-text" data-i18n="下降"> 下降</span><br />
+            <kbd>↑</kbd><span class="ui-text" data-i18n="抬头"> 抬头 </span><kbd>↓</kbd><span class="ui-text" data-i18n="低头"> 低头</span><br /><kbd>←</kbd><span class="ui-text" data-i18n="左转"> 左转
+            </span><kbd>→</kbd><span class="ui-text" data-i18n="右转"> 右转
+          </span></p>
+          <p><span class="ui-text" data-i18n="一段只执行一个按键动作。下一段开始前，新按键随时覆盖旧输入；开始后锁定本段动作。 短按生效一段，长按连续生效，没有待执行动作时停止生成。被覆盖的旧键不会自动恢复。">
             一段只执行一个按键动作。下一段开始前，新按键随时覆盖旧输入；开始后锁定本段动作。
             短按生效一段，长按连续生效，没有待执行动作时停止生成。被覆盖的旧键不会自动恢复。
-          </p>
-          <p>
+          </span></p>
+          <p><span class="ui-text" data-i18n="Q/E 沿世界竖直方向升降。Esc 或切换窗口清空待执行动作。暂停保留当前进度。">
             Q/E 沿世界竖直方向升降。Esc
             或切换窗口清空待执行动作。暂停保留当前进度。
-          </p>
+          </span></p>
         </div>
         <div class="config-note">
-          <i></i> 图片驱动 · 实时相机控制<br /><span
-            >选择场景或上传图片，然后使用方向键探索</span
+          <i></i><span class="ui-text" data-i18n="图片驱动 · 实时相机控制"> 图片驱动 · 实时相机控制</span><br /><span
+            ><span class="ui-text" data-i18n="选择场景或上传图片，然后使用方向键探索">选择场景或上传图片，然后使用方向键探索</span></span
           >
         </div>
       </aside>
+      <section class="world-inputs" aria-label="输入图像与世界描述" data-i18n-aria-label="输入图像与世界描述">
+        <div class="scene-inputs">
+          <div class="section-label">YOUR WORLD <span id="presetCount"></span></div>
+          <h2><span class="ui-text" data-i18n="场景预设">场景预设</span></h2>
+          <div id="presetGallery" class="preset-gallery" aria-label="选择输入图像" data-i18n-aria-label="选择输入图像"></div>
+          <label class="upload" for="upload">
+            <span><span class="ui-text" data-i18n="＋ 上传自己的首帧">＋ 上传自己的首帧</span></span>
+            <small><span class="ui-text" data-i18n="自动中心裁剪为 640 × 384">自动中心裁剪为 640 × 384</span></small>
+          </label>
+          <input type="file" id="upload" accept="image/*" hidden />
+        </div>
+        <div class="prompt-inputs">
+          <div class="section-label">PROMPT</div>
+          <label for="prompt"><span class="ui-text" data-i18n="世界描述">世界描述</span></label>
+          <div id="captionModes" hidden>
+            <div class="caption-buttons" role="group" aria-label="自动描述视角" data-i18n-aria-label="自动描述视角">
+              <button id="firstPerson" type="button" aria-pressed="false"><span class="ui-text" data-i18n="第一人称">第一人称</span></button>
+              <button id="thirdPerson" type="button" aria-pressed="false"><span class="ui-text" data-i18n="第三人称">第三人称</span></button>
+            </div>
+            <p id="captionStatus" role="status" aria-live="polite"><span class="ui-text" data-i18n="选择视角，自动生成世界描述">选择视角，自动生成世界描述</span></p>
+          </div>
+          <textarea id="prompt" spellcheck="false" rows="10"></textarea>
+        </div>
+      </section>
     </main>
     <footer>
       <span>WorldCrafter / INTERACTIVE DEMO</span
@@ -201,6 +220,6 @@
         <span id="seedFooter">42</span></span
       >
     </footer>
-    <script type="module" src="/static/app.js?v=action-gated-10fps-1"></script>
+    <script type="module" src="/static/app.js?v=i18n-1"></script>
   </body>
 </html>

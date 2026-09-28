@@ -2,11 +2,12 @@ import asyncio
 from contextlib import asynccontextmanager
 import hashlib
 import os
+from typing import Literal
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from .config import ROOT, DATA, DEFAULT_PRESET, presets, ROUTE
+from .config import ROOT, DATA, EXAMPLES, DEFAULT_PRESET, presets, ROUTE
 from .media import image_input, concat_recording
 from .service import Manager
 
@@ -25,7 +26,7 @@ async def lifespan(app):
 app = FastAPI(lifespan=lifespan)
 DATA.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
-app.mount("/inputs", StaticFiles(directory=ROOT / "inputs"), name="inputs")
+app.mount("/inputs", StaticFiles(directory=EXAMPLES), name="inputs")
 app.mount("/sessions", StaticFiles(directory=DATA), name="sessions")
 
 
@@ -74,6 +75,26 @@ async def upload(request: Request):
     )
 
 
+class CaptionRequest(BaseModel):
+    upload_id: str = Field(pattern=r"^[a-f0-9]{64}$")
+    style: Literal["first-person", "third-person"]
+
+
+@app.post("/api/caption")
+async def caption(body: CaptionRequest):
+    image = DATA / "uploads" / f"{body.upload_id}.png"
+    if not image.is_file():
+        raise HTTPException(404, "Uploaded image is missing")
+    try:
+        future = app.state.manager.request_caption(image, body.style)
+    except ValueError as exc:
+        raise HTTPException(409, str(exc))
+    try:
+        return await asyncio.shield(asyncio.wrap_future(future))
+    except Exception as exc:
+        raise HTTPException(503, f"自动描述生成失败：{exc}")
+
+
 class CreateSession(BaseModel):
     preset: str = DEFAULT_PRESET
     upload_id: str | None = Field(None, pattern=r"^[a-f0-9]{64}$")
@@ -92,7 +113,7 @@ def create_session(body: CreateSession):
     image = (
         DATA / "uploads" / f"{body.upload_id}.png"
         if body.upload_id
-        else ROOT / "inputs" / body.preset / "input.png"
+        else EXAMPLES / body.preset / "image.png"
     )
     if not image.is_file():
         raise HTTPException(404, "Input image is missing")

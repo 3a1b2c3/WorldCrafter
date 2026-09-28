@@ -24,9 +24,9 @@ class ControlBuffer:
 
     def __init__(self):
         self.clear()
-        self.speed = 1.0
-        self.vertical_speed = 1.0
-        self.rotation_angle = 15.0
+        self.speed = 2.0
+        self.vertical_speed = 2.0
+        self.rotation_angle = 30.0
         self.rotation_mode = "look"
         self.orbit_radius = DEFAULT_ORBIT_RADIUS
 
@@ -57,7 +57,7 @@ class ControlBuffer:
             value = float(message["value"])
             if not math.isfinite(value):
                 raise ValueError("Control setting must be finite")
-            low, high = (1.0, 30.0) if kind == "rotation_angle" else (0.1, 5.0)
+            low, high = (10.0, 45.0) if kind == "rotation_angle" else (1.0, 5.0)
             if kind == "orbit_radius":
                 low, high = 0.0, 5.0
             setattr(self, kind, max(low, min(high, value)))

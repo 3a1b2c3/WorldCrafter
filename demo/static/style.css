@@ -76,6 +76,66 @@ main {
   padding: 34px 0 20px;
   margin: auto;
 }
+.world-inputs {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 28px;
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+}
+.world-inputs h2,
+.prompt-inputs > label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 14px;
+}
+.preset-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.preset-card {
+  min-width: 0;
+  padding: 5px;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 11px;
+}
+.preset-card img {
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  object-fit: cover;
+  border-radius: 3px;
+}
+.preset-card[aria-pressed="true"],
+.caption-buttons button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.world-inputs .upload {
+  display: block;
+}
+.upload[aria-disabled="true"] {
+  opacity: 0.35;
+  pointer-events: none;
+}
+.caption-buttons {
+  display: flex;
+  gap: 10px;
+}
+#captionStatus {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.prompt-inputs textarea {
+  min-height: 260px;
+}
+aside > .two-cols label {
+  margin-top: 0;
+}
 .experience {
   width: 100%;
   min-width: 0;
@@ -378,7 +438,7 @@ aside > label,
   display: block;
   margin: 16px 0 9px;
 }
-aside > label > span {
+aside > label > span:not(.ui-text) {
   font-size: 10px;
   color: var(--muted);
   float: right;
@@ -513,7 +573,7 @@ footer {
   main {
     grid-template-columns: 1fr;
     gap: 28px;
-    width: 69%;
+    width: 92%;
     max-width: 720px;
   }
   aside {
@@ -529,6 +589,9 @@ footer {
   }
 }
 @media (max-width: 550px) {
+  .world-inputs {
+    grid-template-columns: 1fr;
+  }
   main {
     padding: 22px 0;
   }
@@ -563,4 +626,11 @@ footer {
     line-height: 2;
     display: block;
   }
+}
+
+.header-controls { display: flex; align-items: center; gap: 16px; }
+#language { width: auto; font-size: 12px; padding: 7px 9px; }
+@media (max-width: 550px) {
+  header { height: auto; min-height: 83px; flex-wrap: wrap; gap: 10px; padding: 14px 0; }
+  .header-controls { flex-wrap: wrap; gap: 10px; }
 }

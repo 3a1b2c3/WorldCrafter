@@ -1,6 +1,8 @@
 """Bounded controls and one model owner, independent from HTTP and playback."""
 
 from dataclasses import dataclass, field
+from concurrent.futures import Future
+from pathlib import Path
 import json
 import threading
 import time
@@ -89,6 +91,7 @@ class Manager:
         self.ready = False
         self.model_info = {}
         self.error = None
+        self.caption_request = None
         self.shutdown = False
         self.thread = threading.Thread(
             target=self.run, name="worldcrafter-gpu-owner", daemon=True
@@ -121,6 +124,8 @@ class Manager:
 
     def create(self, image, prompt, seed, max_chunks):
         with self.cv:
+            if self.caption_request is not None:
+                raise ValueError("正在生成世界描述，请稍候")
             if (
                 self.active
                 and not self.active.stopped
@@ -133,6 +138,34 @@ class Manager:
             self.persist(s)
             self.cv.notify_all()
             return s.snapshot()
+
+    def request_caption(self, image, style):
+        with self.cv:
+            if not self.ready or self.error or self.shutdown:
+                raise ValueError("模型尚未就绪，请稍后重试")
+            if self.caption_request is not None:
+                raise ValueError("正在生成世界描述，请稍候")
+            if self.active and not self.active.stopped and self.active.state not in ("complete", "error"):
+                raise ValueError("请先停止当前探索，再生成世界描述")
+            future = Future()
+            self.caption_request = (Path(image), style, future)
+            self.cv.notify_all()
+            return future
+
+    def generate_prompt(self, image, style):
+        from PIL import Image
+        from worldcrafter.caption import DEFAULT_CAPTION_MODEL, generate_caption
+
+        model = Path(__file__).resolve().parents[1] / "weights" / "Qwen3-VL-4B-Instruct"
+        with Image.open(image) as source:
+            result = generate_caption(
+                source.convert("RGB"), style.replace("-", "_"),
+                str(model) if model.is_dir() else DEFAULT_CAPTION_MODEL, "cuda:0",
+            )
+        image.with_name(f"{image.stem}.{style}.json").write_text(
+            json.dumps(result, indent=2) + "\n", encoding="utf-8",
+        )
+        return result
 
     def persist(self, s):
         s.directory.mkdir(parents=True, exist_ok=True)
@@ -254,6 +287,7 @@ class Manager:
                     if self.shutdown:
                         break
                     s = self.active
+                    caption = self.caption_request
                     key = None if s is None else (s.id, s.generation)
                     needs_close = owned is not None and (
                         owned != key or s.stopped or s.chunks >= s.max_chunks
@@ -270,7 +304,7 @@ class Manager:
                             s.state = "waiting_action"
                             self.emit(s)
                         eligible = False
-                    if not needs_close and not eligible:
+                    if not needs_close and not eligible and caption is None:
                         self.cv.wait(timeout=1)
                         continue
                     generation, cancel = (
@@ -279,6 +313,20 @@ class Manager:
                 if needs_close:
                     engine.close_session()
                     owned = None
+                    continue
+                if caption is not None:
+                    image, style, future = caption
+                    try:
+                        result = self.generate_prompt(image, style)
+                    except Exception as exc:
+                        traceback.print_exc()
+                        future.set_exception(exc)
+                    else:
+                        future.set_result(result)
+                    finally:
+                        with self.cv:
+                            self.caption_request = None
+                            self.cv.notify_all()
                     continue
                 try:
                     if owned != key:
@@ -391,6 +439,10 @@ class Manager:
                     self.active.state = "error"
                     self.emit(self.active)
         finally:
+            with self.cv:
+                if self.caption_request is not None:
+                    self.caption_request[2].set_exception(RuntimeError("服务已停止"))
+                    self.caption_request = None
             if engine:
                 if hasattr(engine, "shutdown"):
                     engine.shutdown()

@@ -1,3 +1,4 @@
+import { localizedText, initLanguage } from "./i18n.js?v=i18n-1";
 const $ = (id) => document.getElementById(id);
 const PLAYBACK_FPS = 10;
 const ENCODED_FPS = 16;
@@ -5,6 +6,11 @@ let ws = null,
   session = null,
   generation = 0,
   uploadId = null,
+  presetId = null,
+  captionStyle = null,
+  captionReady = false,
+  inputBusy = false,
+  editingLocked = false,
   allPresets = [],
   currentState = "idle";
 const held = new Set();
@@ -36,7 +42,7 @@ const labels = {
 };
 function error(message) {
   $("error").hidden = !message;
-  $("error").textContent = message || "";
+  localizedText($("error"), message || "");
 }
 async function api(path, options) {
   const r = await fetch(path, options);
@@ -49,6 +55,20 @@ async function api(path, options) {
 function send(value) {
   if (ws?.readyState === WebSocket.OPEN)
     ws.send(JSON.stringify({ ...value, generation }));
+}
+function refreshInputs() {
+  const disabled = editingLocked || inputBusy;
+  for (const id of ["upload", "seed", "maxChunks", "firstPerson", "thirdPerson"])
+    $(id).disabled = disabled;
+  $("prompt").disabled = disabled || (uploadId !== null && !captionReady);
+  document.querySelector('label[for="upload"]').setAttribute("aria-disabled", String(disabled));
+  for (const button of $("presetGallery").children) {
+    button.disabled = disabled;
+    button.setAttribute("aria-pressed", String(!uploadId && button.dataset.preset === presetId));
+  }
+  $("firstPerson").setAttribute("aria-pressed", String(captionStyle === "first-person"));
+  $("thirdPerson").setAttribute("aria-pressed", String(captionStyle === "third-person"));
+  $("start").disabled = disabled || !$("prompt").value.trim() || (uploadId !== null && !captionReady);
 }
 function actionText(a) {
   if (!a) return "等待下一段";
@@ -103,7 +123,7 @@ class Player {
       v.style.zIndex = "1";
     });
     $("waitLabel").style.display = "none";
-    $("playbackLabel").textContent = "首帧预览";
+    localizedText($("playbackLabel"), "首帧预览");
   }
   add(chunk) {
     if (this.seen.has(chunk.chunk_index)) return;
@@ -153,8 +173,7 @@ class Player {
     v.style.zIndex = "3";
     this.videos[1 - this.front].style.zIndex = "2";
     $("waitLabel").style.display = "none";
-    $("playbackLabel").textContent =
-      `播放第 ${chunk.chunk_index + 1} 段 · ${PLAYBACK_FPS} fps`;
+    localizedText($("playbackLabel"), `播放第 ${chunk.chunk_index + 1} 段 · ${PLAYBACK_FPS} fps`);
     try {
       await v.play();
       send({
@@ -169,21 +188,22 @@ class Player {
     this.preload();
   }
 }
+initLanguage();
 const player = new Player();
 function state(s) {
   currentState = s.state;
-  $("state").textContent = labels[s.state] || s.state;
-  $("progressText").textContent = `${s.chunks} / ${s.max_chunks} 段`;
+  localizedText($("state"), labels[s.state] || s.state);
+  localizedText($("progressText"), `${s.chunks} / ${s.max_chunks} 段`);
   $("progressBar").style.width = `${(100 * s.chunks) / s.max_chunks}%`;
-  $("currentAction").textContent = actionText(s.active);
+  localizedText($("currentAction"), actionText(s.active));
   const completed = Math.max(0, Math.min(6, Number(s.completed_steps) || 0));
-  $("stepCount").textContent = `${completed} / 6 步`;
+  localizedText($("stepCount"), `${completed} / 6 步`);
   $("stepProgress").setAttribute("aria-valuenow", String(completed));
   [...$("stepProgress").children].forEach((segment, i) =>
     segment.classList.toggle("complete", i < completed),
   );
-  $("nextAction").textContent = actionText(s.pending) === "静止"
-    ? "等待动作输入" : actionText(s.pending);
+  localizedText($("nextAction"), actionText(s.pending) === "静止"
+    ? "等待动作输入" : actionText(s.pending));
   if (s.generation_s != null) {
     $("seconds").innerHTML = `${s.generation_s.toFixed(2)}<small> s</small>`;
     $("fps").innerHTML = `${s.generation_fps.toFixed(2)}<small> FPS</small>`;
@@ -191,7 +211,7 @@ function state(s) {
   const terminal = ["stopped", "complete", "disconnected", "error"].includes(
     s.state,
   );
-  $("start").disabled = !terminal;
+  editingLocked = !terminal;
   $("pause").disabled = terminal || ["paused", "pausing"].includes(s.state);
   $("resume").disabled = !["paused", "pausing"].includes(s.state);
   $("reset").disabled = ["stopped", "disconnected", "error"].includes(s.state);
@@ -199,44 +219,95 @@ function state(s) {
   $("download").setAttribute("aria-disabled", String(s.chunks === 0));
   $("download").href =
     `/api/sessions/${session}/recording?generation=${generation}`;
-  for (const id of ["preset", "upload", "prompt", "seed", "maxChunks"])
-    $(id).disabled = !terminal;
+  refreshInputs();
   if (s.error) error(s.error);
 }
 function changePreset() {
-  const p = allPresets.find((p) => p.id === $("preset").value);
+  const p = allPresets.find((p) => p.id === presetId);
   uploadId = null;
+  captionStyle = null;
+  captionReady = false;
+  $("captionModes").hidden = true;
+  $("upload").value = "";
+  player.clear();
   $("prompt").value = p.prompt;
   $("sceneName").textContent = p.name;
   $("preview").src = p.image;
   $("preview").style.visibility = "visible";
   $("emptyState").style.display = "none";
+  refreshInputs();
+  error("");
 }
-$("preset").addEventListener("change", changePreset);
+$("prompt").addEventListener("input", refreshInputs);
 $("upload").addEventListener("change", async () => {
   const f = $("upload").files[0];
   if (!f) return;
+  inputBusy = true;
+  refreshInputs();
   try {
     const r = await api("/api/upload", { method: "POST", body: f });
     uploadId = r.upload_id;
+    captionStyle = null;
+    captionReady = false;
+    $("prompt").value = "";
+    $("captionModes").hidden = false;
+    localizedText($("captionStatus"), "选择视角，自动生成世界描述");
+    player.clear();
     $("preview").src = r.preview;
     $("preview").style.visibility = "visible";
     $("sceneName").textContent = f.name;
+    $("emptyState").style.display = "none";
     error("");
   } catch (e) {
     error(e.message);
+  } finally {
+    inputBusy = false;
+    $("upload").value = "";
+    refreshInputs();
   }
 });
+async function generatePrompt(style) {
+  if (!uploadId || inputBusy || editingLocked) return;
+  const image = uploadId;
+  captionStyle = style;
+  captionReady = false;
+  inputBusy = true;
+  $("prompt").value = "";
+  localizedText($("captionStatus"), "正在生成世界描述…");
+  refreshInputs();
+  error("");
+  try {
+    const result = await api("/api/caption", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ upload_id: image, style }),
+    });
+    if (uploadId !== image) return;
+    $("prompt").value = result.prompt;
+    captionReady = true;
+    localizedText($("captionStatus"), "已生成，可以编辑描述后开始探索");
+  } catch (e) {
+    localizedText($("captionStatus"), "生成失败，请重新选择视角重试");
+    error(e.message);
+  } finally {
+    inputBusy = false;
+    refreshInputs();
+  }
+}
+$("firstPerson").addEventListener("click", () => generatePrompt("first-person"));
+$("thirdPerson").addEventListener("click", () => generatePrompt("third-person"));
 $("start").addEventListener("click", async () => {
   try {
     error("");
-    $("start").disabled = true;
+    editingLocked = true;
+    refreshInputs();
     if (ws) ws.close();
+    ws = null;
     const s = await api("/api/sessions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        preset: $("preset").value,
+        preset: presetId,
         upload_id: uploadId,
         prompt: $("prompt").value,
         seed: Number($("seed").value),
@@ -254,7 +325,7 @@ $("start").addEventListener("click", async () => {
     ws = connection;
     ws.onopen = () => {
       if (ws !== connection) return;
-      $("connection").textContent = "已连接";
+      localizedText($("connection"), "已连接");
       $("connectionDot").classList.add("online");
       send({ type: "speed", value: Number($("speed").value) });
       send({ type: "vertical_speed", value: Number($("verticalSpeed").value) });
@@ -281,15 +352,16 @@ $("start").addEventListener("click", async () => {
     ws.onclose = () => {
       if (ws !== connection) return;
       clearKeys(false);
-      $("connection").textContent = "连接断开 · 生成已停止";
+      localizedText($("connection"), "连接断开 · 生成已停止");
       $("connectionDot").classList.remove("online");
-      $("start").disabled = false;
-      for (const id of ["preset", "upload", "prompt", "seed", "maxChunks"])
-        $(id).disabled = false;
+      currentState = "disconnected";
+      editingLocked = false;
+      refreshInputs();
     };
   } catch (e) {
     error(e.message);
-    $("start").disabled = false;
+    editingLocked = false;
+    refreshInputs();
   }
 });
 for (const type of ["pause", "resume", "reset", "stop"])
@@ -312,9 +384,9 @@ for (const [id, type, label, angle] of [
 ]) {
   $(id).addEventListener("input", () => {
     const value = Number($(id).value);
-    $(label).textContent = angle
+    localizedText($(label), angle
       ? `${value.toFixed(0)}° / 段`
-      : `${value.toFixed(1)} 米 / 段`;
+      : `${value.toFixed(1)} 米 / 段`);
     send({ type, value });
   });
 }
@@ -322,12 +394,25 @@ function clearKeys(notify = true) {
   held.clear();
   if (notify) send({ type: "blur" });
 }
+function editingText(target) {
+  return target.tagName === "TEXTAREA" || target.isContentEditable ||
+    (target.tagName === "INPUT" && !["range", "file"].includes(target.type));
+}
+// Pointer changes return control immediately. Keyboard users can still adjust
+// sliders/selects with arrows; WASD works while these controls have focus.
+for (const control of document.querySelectorAll('input[type="range"], select')) {
+  control.addEventListener(control.tagName === "SELECT" ? "change" : "pointerup", () => {
+    if (session && !editingLocked) return;
+    if (session) $("viewport").focus({ preventScroll: true });
+  });
+}
+document.addEventListener("focusin", (e) => {
+  if (editingText(e.target)) clearKeys();
+});
 document.addEventListener("keydown", (e) => {
-  if (
-    ["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName) ||
-    e.target.isContentEditable
-  )
-    return;
+  if (editingText(e.target)) return;
+  if ((e.target.tagName === "SELECT" || e.target.type === "range") &&
+      ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) return;
   if (
     !session ||
     ["stopped", "complete", "disconnected", "error"].includes(currentState)
@@ -373,21 +458,32 @@ window.addEventListener("beforeunload", () => ws?.close());
     allPresets = r.presets;
     $("presetCount").textContent = `01 — ${String(allPresets.length).padStart(2, "0")}`;
     for (const p of allPresets) {
-      const o = document.createElement("option");
-      o.value = p.id;
-      o.textContent = p.name;
-      $("preset").append(o);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "preset-card";
+      button.dataset.preset = p.id;
+      const image = document.createElement("img");
+      image.src = p.image;
+      image.alt = p.name;
+      const name = document.createElement("span");
+      name.textContent = p.name;
+      button.append(image, name);
+      button.addEventListener("click", () => {
+        presetId = p.id;
+        changePreset();
+      });
+      $("presetGallery").append(button);
     }
-    $("preset").value = r.default;
+    presetId = r.default;
     changePreset();
     const h = await api("/api/health");
-    $("connection").textContent = h.error
+    localizedText($("connection"), h.error
       ? "模型加载失败"
       : h.mock
         ? "模拟模式"
         : h.ready
           ? "模型已就绪"
-          : "模型加载中";
+          : "模型加载中");
     $("connectionDot").classList.add("online");
     if (h.error) error(h.error);
   } catch (e) {
