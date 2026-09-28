@@ -179,35 +179,6 @@ aside > .two-cols label {
 #viewport > img {
   visibility: hidden;
 }
-.viewport-top,
-.viewport-bottom {
-  position: absolute;
-  z-index: 4;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 20px;
-  color: #fff;
-  font-size: 12px;
-  text-shadow: 0 1px 6px #000;
-}
-.viewport-top {
-  top: 0;
-  background: linear-gradient(#0009, transparent);
-}
-.viewport-bottom {
-  bottom: 0;
-  flex-wrap: wrap;
-  background: linear-gradient(transparent, #000b);
-  font-size: 11px;
-}
-.viewport-bottom small {
-  color: #ccc;
-  margin-left: 8px;
-}
 kbd {
   display: inline-block;
   padding: 3px 5px;
@@ -245,19 +216,45 @@ h1 {
 }
 #waitLabel {
   display: none;
-  position: absolute;
-  z-index: 5;
-  bottom: 64px;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  background: #0a100dc9;
-  border: 1px solid #6b7d5360;
-  padding: 9px 15px;
-  border-radius: 30px;
-  color: #e5eddb;
   font-size: 12px;
-  backdrop-filter: blur(8px);
+  color: var(--muted);
+  margin: 8px 0;
+}
+.viewer-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+  margin: 12px 0;
+}
+.keyboard-guide {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.key-group > span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.key-caps { display: flex; gap: 4px; }
+.key-caps kbd {
+  padding: 6px 8px;
+  min-width: 28px;
+  margin: 0;
+  transition: background-color 80ms, color 80ms;
+}
+.key-caps kbd.active-chunk {
+  background: var(--accent);
+  color: #18271c;
+  border-color: var(--accent);
+  box-shadow: 0 0 8px #d0f78b44;
 }
 .transport {
   display: flex;
@@ -616,16 +613,6 @@ footer {
   }
   .metrics {
     grid-template-columns: 1fr 1fr;
-  }
-  .viewport-bottom {
-    font-size: 9px;
-    padding: 10px;
-  }
-  .viewport-bottom small {
-    display: none;
-  }
-  .viewport-top {
-    padding: 12px;
   }
   .actions {
     gap: 12px;

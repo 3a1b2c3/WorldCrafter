@@ -1,4 +1,4 @@
-import { localizedText, initLanguage } from "./i18n.js?v=ijkl-1";
+import { localizedText, initLanguage } from "./i18n.js?v=keys-1";
 const $ = (id) => document.getElementById(id);
 const PLAYBACK_FPS = 10;
 const ENCODED_FPS = 16;
@@ -14,6 +14,22 @@ let ws = null,
   allPresets = [],
   currentState = "idle";
 const held = new Set();
+// Use the same server snapshot as the six-step progress bar. Physical keyup
+// only clears pending input; it must not extinguish the chunk being generated.
+function renderActiveKeys(action, paused = false) {
+  let activeKey = null;
+  if (action?.forward) activeKey = action.forward > 0 ? "w" : "s";
+  else if (action?.right) activeKey = action.right > 0 ? "d" : "a";
+  else if (action?.up) activeKey = action.up > 0 ? "q" : "e";
+  else if (action?.yaw) activeKey = action.orbit
+    ? (action.yaw > 0 ? "j" : "l") : (action.yaw > 0 ? "arrowright" : "arrowleft");
+  else if (action?.pitch) activeKey = action.orbit
+    ? (action.pitch > 0 ? "k" : "i") : (action.pitch > 0 ? "arrowup" : "arrowdown");
+  document.querySelectorAll("[data-control-key]").forEach((key) => {
+    key.classList.toggle("active-chunk", key.dataset.controlKey === activeKey ||
+      (key.dataset.controlKey === "space" && paused));
+  });
+}
 const controlKeys = new Set([
   "w",
   "a",
@@ -212,6 +228,7 @@ function state(s) {
   const terminal = ["stopped", "complete", "disconnected", "error"].includes(
     s.state,
   );
+  renderActiveKeys(terminal ? null : s.active, ["paused", "pausing"].includes(s.state));
   editingLocked = !terminal;
   $("pause").disabled = terminal || ["paused", "pausing"].includes(s.state);
   $("resume").disabled = !["paused", "pausing"].includes(s.state);
@@ -354,6 +371,7 @@ $("start").addEventListener("click", async () => {
       clearKeys(false);
       localizedText($("connection"), "连接断开 · 生成已停止");
       $("connectionDot").classList.remove("online");
+      renderActiveKeys(null);
       currentState = "disconnected";
       editingLocked = false;
       refreshInputs();
@@ -407,7 +425,7 @@ document.addEventListener("focusin", (e) => {
   if (editingText(e.target)) clearKeys();
 });
 document.addEventListener("keydown", (e) => {
-  if (editingText(e.target)) return;
+  if (editingText(e.target) || e.ctrlKey || e.metaKey || e.altKey) return;
   if ((e.target.tagName === "SELECT" || e.target.type === "range") &&
       ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) return;
   if (

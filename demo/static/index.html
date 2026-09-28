@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>WorldCrafter · World Explorer</title>
-    <link rel="stylesheet" href="/static/style.css?v=ijkl-1" />
+    <link rel="stylesheet" href="/static/style.css?v=keys-1" />
   </head>
   <body>
     <header>
@@ -38,20 +38,16 @@
             <h1><span class="ui-text" data-i18n="从一帧，走进世界">从一帧，走进世界</span></h1>
             <p><span class="ui-text" data-i18n="选择场景，开始探索">选择场景，开始探索</span></p>
           </div>
-          <div class="viewport-top">
-            <span id="sceneName">Socrates</span
-            ><span id="playbackLabel"><span class="ui-text" data-i18n="首帧预览">首帧预览</span></span>
-          </div>
-          <div id="waitLabel"><span class="ui-text" data-i18n="等待下一段 · 保持当前画面">等待下一段 · 保持当前画面</span></div>
-          <div class="viewport-bottom">
-            <span
-              ><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span class="ui-text" data-i18n="移动 ·"> 移动 ·
-              </span><kbd>Q</kbd><kbd>E</kbd><span class="ui-text" data-i18n="升降"> 升降</span></span
-            ><span
-              ><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><span class="ui-text" data-i18n="转向"> 转向
-              </span><span class="orbit-shortcut">IJKL Orbit</span> <small><span class="ui-text" data-i18n="Space 暂停/继续">Space 暂停/继续</span></small></span
-            >
-          </div>
+        </div>
+        <div class="viewer-caption">
+          <span id="sceneName">Socrates</span><span id="playbackLabel" data-i18n="首帧预览">Input preview</span>
+        </div>
+        <div id="waitLabel" data-i18n="等待下一段 · 保持当前画面">Waiting for the next chunk</div>
+        <div class="keyboard-guide" aria-label="Keyboard controls">
+          <div class="key-group"><span data-i18n="移动 / 升降">Move / Elevate</span><div class="key-caps"><kbd data-control-key="w">W</kbd><kbd data-control-key="a">A</kbd><kbd data-control-key="s">S</kbd><kbd data-control-key="d">D</kbd><kbd data-control-key="q">Q</kbd><kbd data-control-key="e">E</kbd></div></div>
+          <div class="key-group"><span data-i18n="原地转头">Look</span><div class="key-caps"><kbd data-control-key="arrowup">↑</kbd><kbd data-control-key="arrowleft">←</kbd><kbd data-control-key="arrowdown">↓</kbd><kbd data-control-key="arrowright">→</kbd></div></div>
+          <div class="key-group"><span data-i18n="环绕">Orbit</span><div class="key-caps"><kbd data-control-key="i">I</kbd><kbd data-control-key="j">J</kbd><kbd data-control-key="k">K</kbd><kbd data-control-key="l">L</kbd></div></div>
+          <div class="key-group"><span data-i18n="暂停 / 继续">Pause / Resume</span><div class="key-caps"><kbd data-control-key="space">Space</kbd></div></div>
         </div>
         <div class="transport">
           <button id="start" class="primary" disabled><span class="ui-text" data-i18n="开始探索">开始探索 </span><span>↗</span></button
@@ -221,6 +217,6 @@
         <span id="seedFooter">42</span></span
       >
     </footer>
-    <script type="module" src="/static/app.js?v=ijkl-1"></script>
+    <script type="module" src="/static/app.js?v=keys-1"></script>
   </body>
 </html>

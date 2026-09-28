@@ -1,5 +1,9 @@
 // Interface language is independent of the English inference prompt.
 const messages = {
+  "移动 / 升降": "Move / Elevate",
+  "原地转头": "Look",
+  "环绕": "Orbit",
+  "暂停 / 继续": "Pause / Resume",
   "方向键原地转头；I/J/K/L 向上/左/下/右环绕前方虚拟中心。": "Arrow keys turn in place; I/J/K/L orbit up/left/down/right around a virtual pivot ahead.",
   "正在连接服务": "Connecting",
   "交互画面：WASD 移动，Q 上浮 E 下降，方向键转动视角，IJKL 环绕": "Interactive view: WASD to move, Q/E to move up/down, arrow keys to turn, IJKL to orbit",
