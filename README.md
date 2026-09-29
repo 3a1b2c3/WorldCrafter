@@ -33,7 +33,7 @@ WorldCrafter enables consistent, camera-controlled scene exploration from an ima
 
 We provide **[WorldCrafter-Base](https://huggingface.co/TencentARC/WorldCrafter-Base)** and **[WorldCrafter-Fast](https://huggingface.co/TencentARC/WorldCrafter-Fast)**, a distilled model for faster inference.
 
-🎮 **Our interactive demo code and serving infrastructure are fully open source**, enabling the community to run, customize, and build on WorldCrafter. See [Interactive Demo](#-interactive-demo) to get started.
+🎮 **Our interactive demo code and serving infrastructure are fully open source**, enabling the community to run, customize, and build on WorldCrafter. See **[Interactive Demo](#-interactive-demo)** to get started.
 
 https://github.com/user-attachments/assets/721a6e31-e411-4802-8c60-3ccc6e9cb33b
 
