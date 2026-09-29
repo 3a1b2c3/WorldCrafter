@@ -1,8 +1,21 @@
 # WorldCrafter: Consistent Video World Model with Implicit 3D-aware Memory
 
 <p align="center">
-  Wangbo Yu, Kunhao Liu, Wenbo Hu, Shenghai Yuan, Chaoran Feng, Haiyang Zhou,<br>
-  Yukun Huang, Yiran Wang, Wang Zhao, Yingmin Luo, Ying Shan
+  <a href="https://drexubery.github.io/">Wangbo Yu</a><sup>1*</sup>,
+  <a href="https://kunhao-liu.github.io/">Kunhao Liu</a><sup>1*</sup>,
+  <a href="https://wbhu.github.io/">Wenbo Hu</a><sup>1†</sup>,
+  <a href="https://shyuanbest.github.io/">Shenghai Yuan</a><sup>2</sup>,
+  <a href="https://www.falcary.com/">Chaoran Feng</a><sup>2</sup>,
+  <a href="https://github.com/zhouhyOcean">Haiyang Zhou</a><sup>2</sup><br>
+  <a href="https://yukun-huang.github.io/">Yukun Huang</a><sup>1</sup>,
+  <a href="https://raymondwang987.github.io/">Yiran Wang</a><sup>1</sup>,
+  <a href="https://thuzhaowang.github.io/">Wang Zhao</a><sup>1</sup>,
+  <a href="https://huggingface.co/luoyingmin">Yingmin Luo</a><sup>1</sup>,
+  <a href="https://scholar.google.com/citations?user=4oXBp9UAAAAJ&amp;hl=en">Ying Shan</a><sup>1</sup>
+</p>
+
+<p align="center">
+  <sup>1</sup>ARC Lab, Tencent IEG &nbsp; <sup>2</sup>Peking University
 </p>
 
 <p align="center">
