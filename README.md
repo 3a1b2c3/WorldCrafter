@@ -31,7 +31,7 @@
 
 WorldCrafter enables consistent, camera-controlled scene exploration from an image or text prompt. Its camera-queryable implicit 3D-aware memory preserves scene information across viewpoints and over long horizons.
 
-We provide **WorldCrafter-Base** and **WorldCrafter-Fast**, a distilled model for faster inference. 
+We provide **[WorldCrafter-Base](https://huggingface.co/TencentARC/WorldCrafter-Base)** and **[WorldCrafter-Fast](https://huggingface.co/TencentARC/WorldCrafter-Fast)**, a distilled model for faster inference.
 
 🎮 **Our interactive demo code and serving infrastructure are fully open source**, enabling the community to run, customize, and build on WorldCrafter. See [Interactive Demo](#-interactive-demo) to get started.
 
