@@ -147,12 +147,12 @@ scale conventions described above.
 
 ### Third-person following views
 
-<img src="I2V/00_cat_vac/image.png" alt="Cat input image" width="640">
+<img src="I2V/00_cat_robot_vacuum/image.png" alt="Cat input image" width="640">
 
 For a moving subject that should stay in view, begin with
 **“A third-person ... view closely follows ...”** to encourage subject following.
 Describe the subject's appearance, its movement, and its surroundings.
-For example, the [Cat prompt](I2V/00_cat_vac/prompt.txt) starts:
+For example, the [Cat prompt](I2V/00_cat_robot_vacuum/prompt.txt) starts:
 
 > A third-person gameplay-like camera closely follows a gray robot vacuum moving through a modern interior with reflective hardwood floors and beautiful rays of light.
 
@@ -161,11 +161,11 @@ on the moving vacuum.
 
 ### First-person views
 
-<img src="I2V/06_waterfall/image.png" alt="Waterfall input image" width="640">
+<img src="I2V/03_waterfall/image.png" alt="Waterfall input image" width="640">
 
 For first-person views, describe the setting, spatial layout, materials,
 lighting, and relationships between objects. For example, the
-[Waterfall prompt](I2V/06_waterfall/prompt.txt) starts:
+[Waterfall prompt](I2V/03_waterfall/prompt.txt) starts:
 
 > A broad garden waterfall pours over layered dark rocks into a shallow pool surrounded by dense subtropical plants.
 

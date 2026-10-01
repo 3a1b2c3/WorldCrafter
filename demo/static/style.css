@@ -79,7 +79,7 @@ main {
 .world-inputs {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 28px;
   border-top: 1px solid var(--line);
   padding-top: 28px;
@@ -93,7 +93,7 @@ main {
 }
 .preset-gallery {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
 }
 .preset-card {
@@ -105,6 +105,7 @@ main {
 }
 .preset-card img {
   width: 100%;
+  height: auto;
   aspect-ratio: 5 / 3;
   object-fit: cover;
   border-radius: 3px;
@@ -131,7 +132,8 @@ main {
   line-height: 1.6;
 }
 .prompt-inputs textarea {
-  min-height: 260px;
+  min-height: 120px;
+  height: 160px;
 }
 aside > .two-cols label {
   margin-top: 0;
@@ -563,6 +565,9 @@ footer {
   letter-spacing: 1.5px;
 }
 @media (max-width: 1000px) {
+  .preset-gallery {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
   main {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -582,6 +587,9 @@ footer {
   }
 }
 @media (max-width: 550px) {
+  .preset-gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
   .world-inputs {
     grid-template-columns: 1fr;
   }

@@ -1,10 +1,28 @@
 # WorldCrafter: Consistent Video World Model with Implicit 3D-aware Memory
 
 <p align="center">
+  <a href="https://drexubery.github.io/">Wangbo Yu</a><sup>1*</sup>,
+  <a href="https://kunhao-liu.github.io/">Kunhao Liu</a><sup>1*</sup>,
+  <a href="https://wbhu.github.io/">Wenbo Hu</a><sup>1†</sup>,
+  <a href="https://shyuanbest.github.io/">Shenghai Yuan</a><sup>2</sup>,
+  <a href="https://www.falcary.com/">Chaoran Feng</a><sup>2</sup>,
+  <a href="https://github.com/zhouhyOcean">Haiyang Zhou</a><sup>2</sup><br>
+  <a href="https://yukun-huang.github.io/">Yukun Huang</a><sup>1</sup>,
+  <a href="https://raymondwang987.github.io/">Yiran Wang</a><sup>1</sup>,
+  <a href="https://thuzhaowang.github.io/">Wang Zhao</a><sup>1</sup>,
+  <a href="https://huggingface.co/luoyingmin">Yingmin Luo</a><sup>1</sup>,
+  <a href="https://scholar.google.com/citations?user=4oXBp9UAAAAJ&amp;hl=en">Ying Shan</a><sup>1</sup>
+</p>
+
+<p align="center">
+  <sup>1</sup>ARC Lab, Tencent IEG &nbsp; <sup>2</sup>Peking University
+</p>
+
+<p align="center">
   <a href="https://arxiv.org/abs/2609.24984"><img src="https://img.shields.io/badge/arXiv-2609.24984-b31b1b.svg" alt="arXiv Paper"></a> &nbsp;
   <a href="https://drexubery.github.io/WorldCrafter/"><img src="https://img.shields.io/badge/Project-Page-Green" alt="Project Page"></a> &nbsp;
   <a href="https://www.youtube.com/watch?v=sg09ftQOl0E&amp;t=5s"><img src="https://img.shields.io/badge/Youtube-Video-b31b1b.svg" alt="YouTube Video"></a> &nbsp;
-  <a href="https://huggingface.co/TencentARC/WorldCrafter-Fast"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Weights-blue" alt="Hugging Face Weights"></a>
+  <a href="https://huggingface.co/spaces/Drexubery/worldcrafter-demo"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue" alt="Hugging Face Demo"></a>
 </p>
 
 🤗 If you find WorldCrafter useful, please consider giving this repo a ⭐. Your support helps us share and improve the project. Thank you!
@@ -13,7 +31,9 @@
 
 WorldCrafter enables consistent, camera-controlled scene exploration from an image or text prompt. Its camera-queryable implicit 3D-aware memory preserves scene information across viewpoints and over long horizons.
 
-We provide **WorldCrafter-Base** and **WorldCrafter-Fast**, a distilled model for faster inference. 
+We provide **[WorldCrafter-Base](https://huggingface.co/TencentARC/WorldCrafter-Base)** and **[WorldCrafter-Fast](https://huggingface.co/TencentARC/WorldCrafter-Fast)**, a distilled model for faster inference.
+
+🎮 **Our interactive demo code and serving infrastructure are fully open source**, enabling the community to run, customize, and build on WorldCrafter. See **[Interactive Demo](#-interactive-demo)** to get started.
 
 https://github.com/user-attachments/assets/721a6e31-e411-4802-8c60-3ccc6e9cb33b
 
@@ -99,15 +119,15 @@ Run with the Base or distilled Fast model:
 ```bash
 # Base
 python inference.py --model-type base --mode i2v \
-  --image-path test/I2V/00_cat_vac/image.png \
-  --prompt test/I2V/00_cat_vac/prompt.txt \
-  --camera-path test/I2V/00_cat_vac/camera.npy
+  --image-path test/I2V/00_cat_robot_vacuum/image.png \
+  --prompt test/I2V/00_cat_robot_vacuum/prompt.txt \
+  --camera-path test/I2V/00_cat_robot_vacuum/camera.npy
 
 # Fast
 python inference.py --model-type fast --mode i2v \
-  --image-path test/I2V/06_waterfall/image.png \
-  --prompt test/I2V/06_waterfall/prompt.txt \
-  --camera-path test/I2V/06_waterfall/camera.npy
+  --image-path test/I2V/03_waterfall/image.png \
+  --prompt test/I2V/03_waterfall/prompt.txt \
+  --camera-path test/I2V/03_waterfall/camera.npy
 ```
 
 
@@ -119,15 +139,15 @@ to automatically write the prompt. For example:
 ```bash
 # Base
 python inference.py --model-type base --mode i2v \
-  --image-path test/I2V/00_cat_vac/image.png \
+  --image-path test/I2V/00_cat_robot_vacuum/image.png \
   --prompt auto-third-person \
-  --camera-path test/I2V/00_cat_vac/camera.npy
+  --camera-path test/I2V/00_cat_robot_vacuum/camera.npy
 
 # Fast
 python inference.py --model-type fast --mode i2v \
-  --image-path test/I2V/06_waterfall/image.png \
+  --image-path test/I2V/03_waterfall/image.png \
   --prompt auto-first-person \
-  --camera-path test/I2V/06_waterfall/camera.npy
+  --camera-path test/I2V/03_waterfall/camera.npy
 ```
 
 ### 2. Text-to-video
