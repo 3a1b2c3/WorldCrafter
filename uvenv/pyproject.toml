@@ -6,10 +6,18 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "worldcrafter",
     "worldcrafter[xformers] ; platform_machine == 'x86_64'",
-    "torch==2.10.0+cu128",
-    "torchvision==0.25.0+cu128",
+    "torch==2.11.0+cu130",
+    "torchvision==0.26.0+cu130",
     "flash-attn-3==3.0.0 ; platform_machine == 'x86_64'",
 ]
+
+# NOTE: bumped from the upstream-pinned torch==2.10.0+cu128 / torchvision==
+# 0.25.0+cu128. CUDA 12.8's bundled nvrtc doesn't recognize GB300's compute
+# capability (sm_103) as a valid --gpu-architecture target, so any op that
+# falls back to runtime NVRTC JIT compilation (e.g. a .prod()-style reduction
+# with no precompiled kernel) fails with "invalid value for --gpu-architecture
+# (-arch)". torch 2.11.0+cu130 is the combo already confirmed working on this
+# same GB300 box (see flashdream_public's venv, this session).
 
 [project.optional-dependencies]
 demo = ["worldcrafter[demo]"]
@@ -18,8 +26,8 @@ demo = ["worldcrafter[demo]"]
 index-strategy = "unsafe-best-match"
 
 [[tool.uv.index]]
-name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
 
 [tool.uv.sources]
 worldcrafter = { path = "..", editable = true }

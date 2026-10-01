@@ -10,8 +10,8 @@ readme = "README.md"
 requires-python = ">=3.11,<3.12"
 license-files = ["LICENSE.txt"]
 dependencies = [
-    "torch==2.10.0",
-    "torchvision==0.25.0",
+    "torch==2.11.0",
+    "torchvision==0.26.0",
     "triton==3.6.0",
     "diffusers==0.37.0",
     "transformers==5.3.0",
