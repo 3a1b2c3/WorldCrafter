@@ -36,9 +36,12 @@ fatal, so later cases must still be servable after an earlier one fails.
 Usage:
     python serve_inference.py --model-type fast --model-path weights/WorldCrafter-Fast --seed 0
 
-UNTESTED end-to-end (no WorldCrafter/uvenv venv or weights available in the
-environment this was written in) -- verify against a real request before
-relying on it.
+Validated against a real run (289-case WBench sweep, both first- and
+third-person auto-captioning paths exercised). The captioner-caching fix
+below (search _caption_cache) has not itself been re-validated yet after
+being added -- it fixes a confirmed bug (Qwen3-VL reloading every case,
+visible as a repeated "Loading weights: 100%" per case in the run that
+caught it) but needs the server process restarted to pick it up.
 """
 from __future__ import annotations
 
@@ -50,7 +53,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
-from worldcrafter.caption import AUTO_PROMPTS, DEFAULT_CAPTION_MODEL, generate_caption  # noqa: E402
+from worldcrafter.caption import AUTO_PROMPTS, DEFAULT_CAPTION_MODEL  # noqa: E402
+import worldcrafter.caption as _worldcrafter_caption  # noqa: E402
 
 DEFAULT_NEGATIVE_PROMPT_PATH = ROOT / "test" / "negative_prompt.txt"
 
@@ -97,13 +101,95 @@ def _read_text(path: Path) -> str:
     return value
 
 
+# Cached Qwen3-VL captioner (processor, model, model_path) for auto-* prompts.
+# worldcrafter.caption.generate_caption() loads the model fresh and deletes
+# it (+ torch.cuda.empty_cache()) on every call by design -- correct for the
+# one-shot CLI, where the process exits right after anyway, but exactly
+# wrong for a persistent server: it was reloading Qwen3-VL (several seconds
+# of "Loading weights: 100%") on every single WBench case, which defeats the
+# entire purpose of this server existing. Cache it instead, load once on
+# first auto-* request, reuse after that.
+#
+# Tradeoff, in case this causes an OOM on a memory-constrained GPU: this now
+# keeps BOTH the ~8GB Qwen3-VL captioner AND the WorldCrafter diffusion model
+# resident in VRAM simultaneously, for the server's whole lifetime --
+# whereas the original per-call load/unload kept peak usage lower by never
+# holding both at once. If that's a problem, the fix is to not use auto-*
+# prompts (pass a real prompt string in the request instead), not to revert
+# this caching.
+_caption_cache: dict = {}
+
+
+def _get_cached_captioner(model_path: str, device: str):
+    import torch
+    from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
+
+    if _caption_cache.get("model_path") == model_path and "model" in _caption_cache:
+        return _caption_cache["processor"], _caption_cache["model"], _caption_cache["target"]
+
+    target = torch.device(device)
+    print(f"[serve_inference] loading captioner {model_path} (cached from now on)",
+         file=sys.stderr)
+    processor = AutoProcessor.from_pretrained(model_path)
+    model = Qwen3VLForConditionalGeneration.from_pretrained(
+        model_path,
+        dtype=torch.bfloat16 if target.type == "cuda" else torch.float32,
+        attn_implementation="sdpa",
+    ).to(target)
+    model.eval()
+    _caption_cache.clear()
+    _caption_cache.update(model_path=model_path, processor=processor, model=model, target=target)
+    return processor, model, target
+
+
+def _cached_generate_caption(image, style: str, model_path: str, device: str) -> str:
+    """Same inference steps as worldcrafter.caption.generate_caption(), but
+    against the cached model/processor from _get_cached_captioner() instead
+    of loading (and then deleting) a fresh copy every call.
+    """
+    import torch
+
+    processor, model, target = _get_cached_captioner(model_path, device)
+    template_path = (
+        Path(_worldcrafter_caption.__file__).parent / "prompts" / f"{style}.txt"
+    )
+    template = template_path.read_text(encoding="utf-8")
+
+    devices = []
+    if target.type == "cuda":
+        devices = [target.index if target.index is not None else torch.cuda.current_device()]
+    with torch.random.fork_rng(devices=devices), torch.inference_mode():
+        messages = [
+            {"role": "system", "content": [{"type": "text", "text": template}]},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "image", "image": image},
+                    {"type": "text", "text": "Write the video prompt for this image."},
+                ],
+            },
+        ]
+        inputs = processor.apply_chat_template(
+            messages, tokenize=True, add_generation_prompt=True,
+            return_dict=True, return_tensors="pt",
+        ).to(target)
+        generated = model.generate(**inputs, max_new_tokens=256, do_sample=False)
+        prompt = processor.decode(
+            generated[0, inputs["input_ids"].shape[1]:], skip_special_tokens=True,
+        ).strip()
+        if generated[0, -1].item() != processor.tokenizer.eos_token_id:
+            raise RuntimeError("Caption reached the token limit before finishing")
+        if not prompt:
+            raise RuntimeError("Caption model returned an empty prompt")
+    return " ".join(prompt.split())
+
+
 def _resolve_prompt(request: dict, args: argparse.Namespace) -> str:
     """Mirrors worldcrafter/caption.py's prepare_prompt(), minus the
     resume-from-disk / state-dir bookkeeping that only matters for the
-    one-shot CLI's own output layout -- the server always generates a
-    fresh caption for auto-* prompts, same as the original comment in
-    worldcrafter_model.py's _ensure_server() already documents as by-design
-    (generate_caption() loads and unloads Qwen3-VL per call on its own).
+    one-shot CLI's own output layout. Uses the cached captioner (see
+    _cached_generate_caption above) instead of worldcrafter.caption's own
+    generate_caption(), which reloads the model on every call.
     """
     prompt = request.get("prompt") or ""
     style = AUTO_PROMPTS.get(prompt)
@@ -119,11 +205,10 @@ def _resolve_prompt(request: dict, args: argparse.Namespace) -> str:
     if not image_path:
         raise ValueError(f"prompt={prompt!r} requires 'image_path'")
     image = load_image(str(image_path)).resize((args.width, args.height))
-    print(f"[serve_inference] generating {prompt} prompt with "
-         f"{_resolve_caption_model(args.caption_model)}", file=sys.stderr)
-    result = generate_caption(
-        image, style, _resolve_caption_model(args.caption_model), args.device)
-    return result["prompt"]
+    model_path = _resolve_caption_model(args.caption_model)
+    print(f"[serve_inference] generating {prompt} prompt with {model_path}",
+         file=sys.stderr)
+    return _cached_generate_caption(image, style, model_path, args.device)
 
 
 def _resolve_negative_prompt(request: dict, args: argparse.Namespace) -> str:
